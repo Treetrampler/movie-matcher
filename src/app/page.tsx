@@ -1,19 +1,20 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Film } from "lucide-react";
+import TypedHeading from "@/components/typed-heading";
 
 export default function LandingPage() {
   return (
     <div className="flex min-h-screen flex-col bg-black text-gray-100">
       {/* Header */}
-      <header className="fixed z-10 w-full bg-black/90 px-8 py-6 backdrop-blur-sm">
+      <header className="fixed z-10 w-full bg-black/80 px-8 py-6 backdrop-blur-sm">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Film className="h-8 w-8 text-orange-500" />
             <span className="text-xl font-bold">MovieMatch</span>
           </div>
 
-          <nav className="hidden items-center gap-8 md:flex">
+          <nav className="absolute left-1/2 flex -translate-x-1/2 items-center gap-8">
             <Link
               href="#features"
               className="text-gray-300 transition-colors hover:text-orange-500"
@@ -38,13 +39,13 @@ export default function LandingPage() {
             <Link href="/login">
               <Button
                 variant="ghost"
-                className="text-gray-300 hover:bg-gray-900 hover:text-orange-500"
+                className="h-10 w-30 text-gray-300 hover:bg-gray-900 hover:text-orange-500"
               >
                 Log In
               </Button>
             </Link>
             <Link href="/signup">
-              <Button className="text-l bg-orange-400 text-black hover:bg-orange-700">
+              <Button className="text-l h-10 w-30 bg-orange-400 text-black hover:bg-orange-700">
                 Sign Up
               </Button>
             </Link>
@@ -55,9 +56,7 @@ export default function LandingPage() {
       {/* Main content */}
       <main className="flex flex-1 flex-col items-center justify-center px-4 py-32 text-center md:py-48">
         <div className="mx-auto max-w-6xl space-y-10">
-          <h1 className="text-4xl font-medium tracking-tight md:text-9xl">
-            Find the perfect movie match
-          </h1>
+          <TypedHeading />
           <p className="mx-auto max-w-2xl text-lg text-gray-400 md:text-xl">
             No more endless scrolling. Discover movies you'll love based on your
             unique taste profile.
@@ -69,7 +68,7 @@ export default function LandingPage() {
                 size="lg"
                 className="h-13 w-60 bg-orange-400 px-8 py-6 text-sm font-bold text-black hover:bg-orange-700"
               >
-                Get Started Today
+                Try MovieMatch Today
               </Button>
             </Link>
           </div>
@@ -77,14 +76,10 @@ export default function LandingPage() {
       </main>
 
       {/* Features section */}
-      <section id="features" className="min-h-screen bg-gray-900 py-32">
+      <section id="features" className="min-h-screen py-32">
         <div className="container mx-auto px-4">
-          <h2 className="mb-16 text-center text-3xl font-bold">
-            How MovieMatch Works
-          </h2>
-
           <div className="grid gap-12 md:grid-cols-3">
-            <div className="rounded-lg bg-gray-800 p-8 shadow-xl">
+            <div className="rounded-lg border-1 bg-black p-8 shadow-xl">
               <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-orange-500/20">
                 <Film className="h-8 w-8 text-orange-500" />
               </div>
@@ -97,7 +92,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="rounded-lg bg-gray-800 p-8 shadow-xl">
+            <div className="rounded-lg border-1 bg-black p-8 shadow-xl">
               <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-orange-500/20">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -121,7 +116,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="rounded-lg bg-gray-800 p-8 shadow-xl">
+            <div className="rounded-lg border-1 bg-black p-8 shadow-xl">
               <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-orange-500/20">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -149,7 +144,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-gray-800 py-8">
+      <footer className="border-t py-8">
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-center justify-between md:flex-row">
             <div className="mb-4 flex items-center gap-2 md:mb-0">
