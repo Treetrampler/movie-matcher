@@ -8,13 +8,13 @@ export default function AnimateLandingCards() {
   // Define transformations for each card based on scroll progress
   const card1Y = useTransform(scrollYProgress, [0, 0.5], [-50, 0]); // Moves from 100px down to 0px
   const card1X = useTransform(scrollYProgress, [0, 0.5], [-50, 0]); // Moves from -50px (left) to 0px
-  const card1Rotate = useTransform(scrollYProgress, [0, 0.5], [30, 0]); // Rotates from 0 to 360 degrees
+  const card1Rotate = useTransform(scrollYProgress, [0, 0.5], [5, 0]); // Rotates from 0 to 360 degrees
 
-  const card2Y = useTransform(scrollYProgress, [0, 0.5], [-50, 0]); // Moves from 100px down to 0px
+  const card2Y = useTransform(scrollYProgress, [0, 0.5], [-30, 0]); // Moves from 100px down to 0px
 
   const card3Y = useTransform(scrollYProgress, [0, 0.5], [-50, 0]); // Moves from 100px down to 0px
   const card3X = useTransform(scrollYProgress, [0, 0.5], [50, 0]); // Moves from -50px (left) to 0px
-  const card3Rotate = useTransform(scrollYProgress, [0, 0.5], [-30, 0]); // Rotates from 0 to 360 degrees
+  const card3Rotate = useTransform(scrollYProgress, [0, 0.5], [-5, 0]); // Rotates from 0 to 360 degrees
 
   return (
     <section id="features" className="min-h-screen py-10">
