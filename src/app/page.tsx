@@ -34,7 +34,7 @@ export default function LandingPage() {
       </header>
 
       {/* Main content */}
-      <main className="flex flex-1 flex-col items-center justify-center px-4 pt-48 pb-50 text-center">
+      <main className="flex min-h-screen flex-1 flex-col items-center justify-center bg-[url('/bg2.jpg')] bg-cover bg-center bg-no-repeat px-4 pt-48 pb-20 text-center">
         <div className="mx-auto max-w-6xl space-y-10">
           <TypedHeading />
           <p className="mx-auto max-w-2xl text-lg text-gray-400 md:text-xl">

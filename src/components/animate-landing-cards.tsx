@@ -19,7 +19,7 @@ export default function AnimateLandingCards() {
   return (
     <section
       id="features"
-      className="min-h-screen bg-[url('/bg1.jpg')] bg-cover bg-center bg-no-repeat py-10"
+      className="min-h-screen bg-[url('/bg1.jpg')] bg-cover bg-center bg-no-repeat"
     >
       <div className="container mx-auto px-4">
         <div className="grid gap-12 md:grid-cols-3">
