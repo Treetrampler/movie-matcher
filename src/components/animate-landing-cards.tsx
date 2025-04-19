@@ -17,7 +17,10 @@ export default function AnimateLandingCards() {
   const card3Rotate = useTransform(scrollYProgress, [0, 0.5], [-5, 0]); // Rotates from 0 to 360 degrees
 
   return (
-    <section id="features" className="min-h-screen py-10">
+    <section
+      id="features"
+      className="min-h-screen bg-[url('/bg1.jpg')] bg-cover bg-center bg-no-repeat py-10"
+    >
       <div className="container mx-auto px-4">
         <div className="grid gap-12 md:grid-cols-3">
           {/* Card 1 */}
