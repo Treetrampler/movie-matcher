@@ -1,8 +1,9 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Film } from "lucide-react";
-import TypedHeading from "@/components/typed-heading";
+import Link from "next/link";
+
 import AnimateLandingCards from "@/components/animate-landing-cards";
+import TypedHeading from "@/components/typed-heading";
+import { Button } from "@/components/ui/button";
 
 export default function LandingPage() {
   return (
