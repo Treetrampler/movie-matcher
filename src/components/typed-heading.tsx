@@ -3,7 +3,7 @@ import { ReactTyped } from "react-typed";
 
 export default function TypedHeading() {
   return (
-    <h1 className="text-4xl font-medium tracking-tight md:text-9xl">
+    <h1 className="text-6xl font-medium tracking-tight md:text-[8vw] xl:text-[7vw]">
       The movie night
       <br />
       <ReactTyped

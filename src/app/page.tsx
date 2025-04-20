@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 
 export default function LandingPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-black text-gray-100">
+    <div className="flex min-h-screen flex-col overflow-hidden bg-black text-gray-100">
       {/* Header */}
       <header className="fixed z-10 w-full bg-black/80 px-8 py-6 backdrop-blur-sm">
         <div className="container mx-auto flex items-center justify-between">
@@ -35,7 +35,7 @@ export default function LandingPage() {
       </header>
 
       {/* Main content */}
-      <main className="flex min-h-screen flex-1 flex-col items-center justify-center bg-[url('/bg2.jpg')] bg-cover bg-center bg-no-repeat px-4 pt-48 pb-20 text-center">
+      <main className="flex min-h-screen flex-1 flex-col items-center justify-center bg-[url('/bg2.jpg')] bg-cover bg-center bg-no-repeat px-4 pt-32 pb-20 text-center">
         <div className="mx-auto max-w-6xl space-y-10">
           <TypedHeading />
           <p className="mx-auto max-w-2xl text-lg text-gray-400 md:text-xl">
@@ -43,11 +43,11 @@ export default function LandingPage() {
             unique taste profile.
           </p>
 
-          <div className="flex flex-col justify-center gap-4 pt-12 pb-16 sm:flex-row">
+          <div className="flex flex-col justify-center gap-4 pt-4 pb-16 sm:flex-row">
             <Link href="/signup">
               <Button
                 size="lg"
-                className="h-13 w-60 bg-orange-400 px-8 py-6 text-sm font-bold text-black hover:bg-orange-700"
+                className="h-13 w-60 bg-orange-400 px-8 text-sm font-bold text-black hover:bg-orange-700"
               >
                 Try MovieMatch Today
               </Button>
