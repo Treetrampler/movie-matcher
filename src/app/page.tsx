@@ -25,7 +25,7 @@ export default function LandingPage() {
                 Log In
               </Button>
             </Link>
-            <Link href="/signup">
+            <Link href="/sign-up">
               <Button className="text-l h-10 w-30 bg-orange-400 text-black hover:bg-orange-700">
                 Sign Up
               </Button>
@@ -44,7 +44,7 @@ export default function LandingPage() {
           </p>
 
           <div className="flex flex-col justify-center gap-4 pt-4 pb-16 sm:flex-row">
-            <Link href="/signup">
+            <Link href="/sign-up">
               <Button
                 size="lg"
                 className="h-13 w-60 bg-orange-400 px-8 text-sm font-bold text-black hover:bg-orange-700"
