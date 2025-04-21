@@ -13,7 +13,7 @@ export default function LandingPage() {
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Film className="h-8 w-8 text-orange-500" />
-            <span className="text-xl font-bold">MovieMatch</span>
+            <span className="text-xl font-bold">Aperture</span>
           </div>
 
           <div className="flex items-center gap-4">
@@ -49,7 +49,7 @@ export default function LandingPage() {
                 size="lg"
                 className="h-13 w-60 bg-orange-400 px-8 text-sm font-bold text-black hover:bg-orange-700"
               >
-                Try MovieMatch Today
+                Try Aperture Today
               </Button>
             </Link>
           </div>
@@ -65,11 +65,11 @@ export default function LandingPage() {
           <div className="flex flex-col items-center justify-between md:flex-row">
             <div className="mb-4 flex items-center gap-2 md:mb-0">
               <Film className="h-6 w-6 text-orange-500" />
-              <span className="font-bold">MovieMatch</span>
+              <span className="font-bold">Aperture</span>
             </div>
 
             <div className="text-sm text-gray-500">
-              &copy; {new Date().getFullYear()} MovieMatch. All rights reserved.
+              &copy; {new Date().getFullYear()} Aperture. All rights reserved.
             </div>
           </div>
         </div>
