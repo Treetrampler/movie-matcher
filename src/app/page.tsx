@@ -20,13 +20,13 @@ export default function LandingPage() {
             <Link href="/login">
               <Button
                 variant="ghost"
-                className="h-10 w-30 text-gray-300 hover:bg-gray-900 hover:text-orange-500"
+                className="h-10 w-30 text-gray-300 hover:bg-gray-900 hover:text-orange-400"
               >
                 Log In
               </Button>
             </Link>
             <Link href="/sign-up">
-              <Button className="text-l h-10 w-30 bg-orange-400 text-black hover:bg-orange-700">
+              <Button className="text-l h-10 w-30 bg-orange-400 text-black hover:bg-orange-300">
                 Sign Up
               </Button>
             </Link>
@@ -47,7 +47,7 @@ export default function LandingPage() {
             <Link href="/sign-up">
               <Button
                 size="lg"
-                className="h-13 w-60 bg-orange-400 px-8 text-sm font-bold text-black hover:bg-orange-700"
+                className="h-13 w-60 bg-orange-400 px-8 text-sm font-bold text-black hover:bg-orange-300"
               >
                 Try Aperture Today
               </Button>
