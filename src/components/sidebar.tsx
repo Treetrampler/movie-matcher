@@ -5,11 +5,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Film, Users, UserPlus, User, LogOut, Aperture } from "lucide-react";
 import { cn } from "@/lib/utils";
-import handleSignOut from "@/hooks/sign-out.";
+import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
 
 export function Sidebar() {
   const [isExpanded, setIsExpanded] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   const navItems = [
     { name: "Catalogue", icon: Aperture, href: "/catalogue" },
@@ -29,6 +31,17 @@ export function Sidebar() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [pathname]);
+
+  async function handleSignOut() {
+    try {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+
+      router.refresh();
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  }
 
   return (
     <div
