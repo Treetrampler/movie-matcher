@@ -6,6 +6,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+// signup success page, if a user has successfully signed up it lets them know to confirm their email
+
 export default function Page() {
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">

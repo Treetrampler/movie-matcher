@@ -16,6 +16,8 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
 
+// form for resetting password, this is where you input email to send the reset password link
+
 export function ForgotPasswordForm({
   className,
   ...props
@@ -25,14 +27,16 @@ export function ForgotPasswordForm({
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // function for handling the logic of sending the reset password link to the email
+
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    // creates the supabase client, sets the button to loading so no more inputs can happen, and sets the error to null
     const supabase = createClient();
     setIsLoading(true);
     setError(null);
 
     try {
-      // The url which will be included in the email. This URL needs to be configured in your redirect URLs in the Supabase dashboard at https://supabase.com/dashboard/project/_/auth/url-configuration
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/update-password`,
       });
@@ -44,6 +48,8 @@ export function ForgotPasswordForm({
       setIsLoading(false);
     }
   };
+
+  // here is the HTML that is returned, if the success state is true, then it shows the success message, otherwise it shows the form to input the email. This means we don't use a separate page once the email is sent
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -97,6 +103,7 @@ export function ForgotPasswordForm({
                 <Link
                   href="/login"
                   className="underline underline-offset-4 hover:text-orange-300"
+                  aria-label="Login"
                 >
                   Login
                 </Link>

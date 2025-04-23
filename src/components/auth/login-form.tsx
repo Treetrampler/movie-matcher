@@ -28,9 +28,11 @@ export function LoginForm({
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
+  // function to handle login through supabase
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     const supabase = createClient();
+    // is loading prevents spamming the button
     setIsLoading(true);
     setError(null);
 
@@ -40,7 +42,7 @@ export function LoginForm({
         password,
       });
       if (error) throw error;
-      // Update this route to redirect to an authenticated route. The user already has an active session.
+      // pushes the user to the main page after login
       router.push("/protected");
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
@@ -48,6 +50,8 @@ export function LoginForm({
       setIsLoading(false);
     }
   };
+
+  // returned HTML for the login form
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -82,6 +86,9 @@ export function LoginForm({
                     Forgot your password?
                   </Link>
                 </div>
+
+                {/* pulls the password input from the password-input component to add things like toggle password visibility */}
+
                 <PasswordInput
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -103,6 +110,7 @@ export function LoginForm({
               <Link
                 href="/sign-up"
                 className="underline underline-offset-4 hover:text-orange-300"
+                aria-label="sign-up"
               >
                 Sign up
               </Link>

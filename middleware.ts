@@ -2,9 +2,13 @@ import type { NextRequest } from "next/server";
 
 import { updateSession } from "@/utils/supabase/middleware";
 
+// the actual middleware, pulls from the supabase middleware
+
 export async function middleware(request: NextRequest) {
   return await updateSession(request);
 }
+
+// applies this function to all routes except the ones specified in the config
 
 export const config = {
   matcher: [

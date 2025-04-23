@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+// password input is abstracted for simplicity and reusability because we want to add the toggle visibility button
+
 export function PasswordInput({
   value,
   onChange,

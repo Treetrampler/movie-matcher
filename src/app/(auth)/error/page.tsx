@@ -1,5 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+// the error page for auth routes
+
 export default async function Page({
   searchParams,
 }: {

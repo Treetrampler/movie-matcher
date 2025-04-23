@@ -2,6 +2,8 @@ import * as React from "react";
 
 const MOBILE_BREAKPOINT = 768;
 
+// handles mobile breakpoints for the app
+
 export function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(
     undefined,

@@ -18,6 +18,8 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
 
+// this form is abstracted from the signup page for simplicity and optimisation
+
 export function SignUpForm({
   className,
   ...props
@@ -29,9 +31,11 @@ export function SignUpForm({
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
+  // Handle sign up form submission function
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     const supabase = createClient();
+    // loading prevents spamming the sign up button
     setIsLoading(true);
     setError(null);
 
@@ -50,6 +54,7 @@ export function SignUpForm({
         },
       });
       if (error) throw error;
+      // Redirect to the sign-up success page telling them  to confirm email
       router.push("/sign-up-success");
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
@@ -57,6 +62,8 @@ export function SignUpForm({
       setIsLoading(false);
     }
   };
+
+  // return HTML, has similar PasswordInput to the login form
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
