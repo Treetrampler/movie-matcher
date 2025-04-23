@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { PasswordInput } from "@/components/auth/password-input";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -81,12 +82,11 @@ export function LoginForm({
                     Forgot your password?
                   </Link>
                 </div>
-                <Input
-                  id="password"
-                  type="password"
-                  required
+                <PasswordInput
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  id="password"
+                  required
                 />
               </div>
               {error && <p className="text-sm text-red-500">{error}</p>}
