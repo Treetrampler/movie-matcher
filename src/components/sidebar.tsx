@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Film, Users, UserPlus, User, LogOut, Aperture } from "lucide-react";
 import { cn } from "@/lib/utils";
+import handleSignOut from "@/hooks/sign-out.";
 
 export function Sidebar() {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -15,7 +16,6 @@ export function Sidebar() {
     { name: "Create Group", icon: Users, href: "/create-group" },
     { name: "Join Group", icon: UserPlus, href: "/join-group" },
     { name: "View Profile", icon: User, href: "/profile" },
-    { name: "Sign Out", icon: LogOut, href: "/signout" },
   ];
 
   // Close sidebar when route changes on mobile
@@ -83,6 +83,23 @@ export function Sidebar() {
               </li>
             );
           })}
+          {/* Sign Out Button */}
+          <li>
+            <button
+              onClick={handleSignOut}
+              className="flex w-full items-center rounded-md px-3 py-2 text-left hover:bg-gray-800"
+            >
+              <LogOut className="h-5 w-5 flex-shrink-0" />
+              <span
+                className={cn(
+                  "ml-3 whitespace-nowrap transition-opacity duration-200",
+                  isExpanded ? "opacity-100" : "opacity-0",
+                )}
+              >
+                Sign Out
+              </span>
+            </button>
+          </li>
         </ul>
       </nav>
     </div>
