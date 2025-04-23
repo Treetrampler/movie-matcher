@@ -99,10 +99,6 @@ export function MovieCatalogue() {
 
   return (
     <div className="container mx-auto max-w-[95%] px-4 py-8">
-      <h1 className="mb-8 text-center text-4xl font-bold text-white">
-        Movie Catalogue
-      </h1>
-
       <div className="mb-8 flex flex-col gap-4 sm:flex-row">
         <div className="relative flex-grow">
           <Search
