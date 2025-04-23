@@ -1,21 +1,17 @@
 import { redirect } from "next/navigation";
 
 import { LogoutButton } from "@/components/auth/logout-button";
-import { createClient } from "@/utils/supabase/server";
+import checkUser from "@/hooks/check-user";
 
 export default async function ProtectedPage() {
-  const supabase = await createClient();
-
-  const { data, error } = await supabase.auth.getUser();
-  if (error || !data?.user) {
+  const isUser = await checkUser();
+  if (!isUser) {
     redirect("/login");
   }
 
   return (
     <div className="flex h-svh w-full items-center justify-center gap-2">
-      <p>
-        Hello <span>{data.user.email}</span>
-      </p>
+      <p>Hello</p>
       <LogoutButton />
     </div>
   );
