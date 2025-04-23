@@ -13,20 +13,20 @@ export default function LandingPage() {
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Film className="h-8 w-8 text-orange-500" />
-            <span className="text-xl font-bold">MovieMatch</span>
+            <span className="text-xl font-bold">Aperture</span>
           </div>
 
           <div className="flex items-center gap-4">
             <Link href="/login">
               <Button
                 variant="ghost"
-                className="h-10 w-30 text-gray-300 hover:bg-gray-900 hover:text-orange-500"
+                className="h-10 w-30 text-gray-300 hover:bg-gray-900 hover:text-orange-400"
               >
                 Log In
               </Button>
             </Link>
-            <Link href="/signup">
-              <Button className="text-l h-10 w-30 bg-orange-400 text-black hover:bg-orange-700">
+            <Link href="/sign-up">
+              <Button className="text-l h-10 w-30 bg-orange-400 text-black hover:bg-orange-300">
                 Sign Up
               </Button>
             </Link>
@@ -44,12 +44,12 @@ export default function LandingPage() {
           </p>
 
           <div className="flex flex-col justify-center gap-4 pt-4 pb-16 sm:flex-row">
-            <Link href="/signup">
+            <Link href="/sign-up">
               <Button
                 size="lg"
-                className="h-13 w-60 bg-orange-400 px-8 text-sm font-bold text-black hover:bg-orange-700"
+                className="h-13 w-60 bg-orange-400 px-8 text-sm font-bold text-black hover:bg-orange-300"
               >
-                Try MovieMatch Today
+                Try Aperture Today
               </Button>
             </Link>
           </div>
@@ -65,11 +65,11 @@ export default function LandingPage() {
           <div className="flex flex-col items-center justify-between md:flex-row">
             <div className="mb-4 flex items-center gap-2 md:mb-0">
               <Film className="h-6 w-6 text-orange-500" />
-              <span className="font-bold">MovieMatch</span>
+              <span className="font-bold">Aperture</span>
             </div>
 
             <div className="text-sm text-gray-500">
-              &copy; {new Date().getFullYear()} MovieMatch. All rights reserved.
+              &copy; {new Date().getFullYear()} Aperture. All rights reserved.
             </div>
           </div>
         </div>
