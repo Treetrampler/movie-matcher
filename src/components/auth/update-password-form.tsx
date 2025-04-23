@@ -16,6 +16,8 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
 
+// abstracted form component for updating password
+
 export function UpdatePasswordForm({
   className,
   ...props
@@ -25,6 +27,7 @@ export function UpdatePasswordForm({
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
+  // handle form submission
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     const supabase = createClient();
@@ -42,6 +45,8 @@ export function UpdatePasswordForm({
       setIsLoading(false);
     }
   };
+
+  // return HTML, fairly standard
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>

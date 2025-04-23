@@ -1,6 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
+// creates the client server side, abstracted for simplicity. All hooks in the utils/supabase folder are taken from supabase docs
+
 export async function createClient() {
   const cookieStore = await cookies();
 

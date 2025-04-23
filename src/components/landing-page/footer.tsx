@@ -1,5 +1,6 @@
 import { Film } from "lucide-react";
 
+// abstracted footer for simplicity, no real other reason
 export default function Footer() {
   return (
     <footer className="border-t py-8">

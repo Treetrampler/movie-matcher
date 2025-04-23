@@ -2,19 +2,21 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Film } from "lucide-react";
 
+// abstracted landing card animations, looks nice for UI + optimizes performance as we need to render this client side
+
 export default function AnimateLandingCards() {
   const { scrollYProgress } = useScroll(); // Tracks the scroll progress of the page
 
   // Define transformations for each card based on scroll progress
   const card1Y = useTransform(scrollYProgress, [0, 0.5], [-50, 0]); // Moves from 100px down to 0px
   const card1X = useTransform(scrollYProgress, [0, 0.5], [-50, 0]); // Moves from -50px (left) to 0px
-  const card1Rotate = useTransform(scrollYProgress, [0, 0.5], [5, 0]); // Rotates from 0 to 360 degrees
+  const card1Rotate = useTransform(scrollYProgress, [0, 0.5], [5, 0]); // Rotates from 5 to 0 degrees
 
   const card2Y = useTransform(scrollYProgress, [0, 0.5], [-30, 0]); // Moves from 100px down to 0px
 
   const card3Y = useTransform(scrollYProgress, [0, 0.5], [-50, 0]); // Moves from 100px down to 0px
-  const card3X = useTransform(scrollYProgress, [0, 0.5], [50, 0]); // Moves from -50px (left) to 0px
-  const card3Rotate = useTransform(scrollYProgress, [0, 0.5], [-5, 0]); // Rotates from 0 to 360 degrees
+  const card3X = useTransform(scrollYProgress, [0, 0.5], [50, 0]); // Moves from 50px (right) to 0px
+  const card3Rotate = useTransform(scrollYProgress, [0, 0.5], [-5, 0]); // Rotates from -5 to 0 degrees
 
   return (
     <section
@@ -44,6 +46,7 @@ export default function AnimateLandingCards() {
             style={{ y: card2Y }}
           >
             <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-orange-500/20">
+              {/* The SVG is just a little icon */}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-8 w-8 text-orange-500"
@@ -71,6 +74,7 @@ export default function AnimateLandingCards() {
             style={{ y: card3Y, x: card3X, rotate: card3Rotate }}
           >
             <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-orange-500/20">
+              {/* The SVG is just a little icon */}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-8 w-8 text-orange-500"
