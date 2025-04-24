@@ -27,6 +27,7 @@ export function MovieCatalogue() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("title-asc");
   const [isLoading, setIsLoading] = useState(true); // State to track loading
+  const [visibleCount, setVisibleCount] = useState(20); // State to track visible movies
 
   const error = null; // Placeholder for error handling
 
@@ -34,7 +35,7 @@ export function MovieCatalogue() {
   useEffect(() => {
     async function fetchMovies() {
       try {
-        const response = await fetch("/data/movies.json"); // Adjust the path if necessary
+        const response = await fetch("/data/movies.json");
         if (!response.ok) {
           throw new Error("Failed to fetch movies");
         }
@@ -70,6 +71,26 @@ export function MovieCatalogue() {
         return 0;
     }
   });
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop =
+        window.scrollY ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+
+      if (scrollTop + windowHeight >= documentHeight - 90) {
+        setVisibleCount((prevCount) => Math.min(prevCount + 20, 989)); // change 989 to the total number of movies
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
     <div className="container mx-auto max-w-[95%] px-4 py-8">
@@ -112,11 +133,12 @@ export function MovieCatalogue() {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {sortedMovies.map((movie) => (
+          {sortedMovies.slice(0, visibleCount).map((movie) => (
             <MovieCard key={movie.id} movie={movie} />
           ))}
         </div>
       )}
+      <h1> {visibleCount} </h1>
     </div>
   );
 }
