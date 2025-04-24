@@ -1,7 +1,8 @@
+import { redirect } from "next/navigation";
 import React from "react";
+
 import { Sidebar } from "@/components/sidebar";
 import checkUser from "@/hooks/check-user";
-import { redirect } from "next/navigation";
 
 export default async function ProtectedLayout({
   children,

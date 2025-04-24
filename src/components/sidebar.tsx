@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Aperture, Film, LogOut, User, UserPlus, Users } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Film, Users, UserPlus, User, LogOut, Aperture } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
 import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
 
 export function Sidebar() {
   const [isExpanded, setIsExpanded] = useState(false);

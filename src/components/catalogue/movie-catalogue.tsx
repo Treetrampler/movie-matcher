@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
+import { useEffect, useState } from "react";
+
+import { MovieCard } from "@/components/catalogue/movie-card";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -10,74 +12,47 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MovieCard } from "@/components/catalogue/movie-card";
 
-// Mock data for movie cards
-const mockMovies = [
-  {
-    id: 1,
-    title: "The Shawshank Redemption",
-    rating: 4.7,
-    genres: ["Drama", "Crime"],
-    imageUrl: "/placeholder.svg?height=400&width=300",
-  },
-  {
-    id: 2,
-    title: "The Godfather",
-    rating: 4.8,
-    genres: ["Crime", "Drama"],
-    imageUrl: "/placeholder.svg?height=400&width=300",
-  },
-  {
-    id: 3,
-    title: "The Dark Knight",
-    rating: 4.6,
-    genres: ["Action", "Crime", "Drama"],
-    imageUrl: "/placeholder.svg?height=400&width=300",
-  },
-  {
-    id: 4,
-    title: "Pulp Fiction",
-    rating: 4.5,
-    genres: ["Crime", "Drama"],
-    imageUrl: "/placeholder.svg?height=400&width=300",
-  },
-  {
-    id: 5,
-    title: "Fight Club",
-    rating: 4.4,
-    genres: ["Drama", "Thriller"],
-    imageUrl: "/fightclub.jpg",
-  },
-  {
-    id: 6,
-    title: "Inception",
-    rating: 4.5,
-    genres: ["Action", "Sci-Fi", "Thriller"],
-    imageUrl: "/placeholder.svg?height=400&width=300",
-  },
-  {
-    id: 7,
-    title: "The Matrix",
-    rating: 4.4,
-    genres: ["Action", "Sci-Fi"],
-    imageUrl: "/placeholder.svg?height=400&width=300",
-  },
-  {
-    id: 8,
-    title: "Goodfellas",
-    rating: 4.5,
-    genres: ["Biography", "Crime", "Drama"],
-    imageUrl: "/placeholder.svg?height=400&width=300",
-  },
-];
+// Define the Movie type
+interface Movie {
+  id: number;
+  title: string;
+  rating: number;
+  genres: string[];
+  imageUrl: string | null;
+}
 
 export function MovieCatalogue() {
+  const [movies, setMovies] = useState<Movie[]>([]); // State to store fetched movies
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("title-asc");
+  const [isLoading, setIsLoading] = useState(true); // State to track loading
+  const [visibleCount, setVisibleCount] = useState(20); // State to track visible movies
+
+  const error = null; // Placeholder for error handling
+
+  // Fetch movies from movies.json
+  useEffect(() => {
+    async function fetchMovies() {
+      try {
+        const response = await fetch("/data/movies.json");
+        if (!response.ok) {
+          throw new Error("Failed to fetch movies");
+        }
+        const data = await response.json();
+        setMovies(data);
+      } catch (err) {
+        console.error("Error fetching movies:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchMovies();
+  }, []);
 
   // Filter movies based on search query
-  const filteredMovies = mockMovies.filter((movie) =>
+  const filteredMovies = movies.filter((movie) =>
     movie.title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
@@ -96,6 +71,26 @@ export function MovieCatalogue() {
         return 0;
     }
   });
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop =
+        window.scrollY ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+
+      if (scrollTop + windowHeight >= documentHeight - 90) {
+        setVisibleCount((prevCount) => Math.min(prevCount + 20, 989)); // change 989 to the total number of movies
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
     <div className="container mx-auto max-w-[95%] px-4 py-8">
@@ -128,17 +123,22 @@ export function MovieCatalogue() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {sortedMovies.map((movie) => (
-          <MovieCard key={movie.id} movie={movie} />
-        ))}
-      </div>
-
-      {sortedMovies.length === 0 && (
+      {isLoading ? (
+        <div className="py-12 text-center text-gray-500">Loading movies...</div>
+      ) : error ? (
+        <div className="py-12 text-center text-red-500">Error: {error}</div>
+      ) : sortedMovies.length === 0 ? (
         <div className="py-12 text-center text-gray-500">
           No movies found matching your search.
         </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {sortedMovies.slice(0, visibleCount).map((movie) => (
+            <MovieCard key={movie.id} movie={movie} />
+          ))}
+        </div>
       )}
+      <h1> {visibleCount} </h1>
     </div>
   );
 }
