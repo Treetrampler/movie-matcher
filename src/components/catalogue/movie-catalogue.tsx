@@ -138,7 +138,6 @@ export function MovieCatalogue() {
           ))}
         </div>
       )}
-      <h1> {visibleCount} </h1>
     </div>
   );
 }
