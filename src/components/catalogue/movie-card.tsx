@@ -2,10 +2,11 @@
 
 import { Star } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { createClient } from "@/utils/supabase/client";
 
 interface Movie {
   id: number;
@@ -29,6 +30,93 @@ export function MovieCard({ movie }: MovieCardProps) {
   // Round to nearest 0.5 for star display
   const roundedRating = Math.round(displayRating * 2) / 2;
 
+  // Save user rating to Supabase
+  const saveRating = async (rating: number) => {
+    try {
+      const supabase = createClient();
+
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError || !session?.user?.id) {
+        console.error(
+          "Failed to retrieve user session:",
+          sessionError?.message,
+        );
+        return;
+      }
+
+      const userId = session.user.id;
+
+      const { data, error } = await supabase
+        .from("user-movie-data") // Replace with your Supabase table name
+        .upsert(
+          {
+            movie_id: movie.id,
+            user_id: userId,
+            rating,
+          },
+          { onConflict: "movie_id,user_id" },
+        );
+
+      if (error) {
+        console.error("Error saving rating:", error.message);
+      } else {
+        // eslint-disable-next-line no-console
+        console.log("Rating saved successfully:", data);
+      }
+    } catch (err) {
+      console.error("Unexpected error saving rating:", err);
+    }
+  };
+
+  // Load user rating from Supabase
+  const loadUserRating = async () => {
+    try {
+      const supabase = createClient();
+
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError || !session?.user?.id) {
+        console.error(
+          "Failed to retrieve user session:",
+          sessionError?.message,
+        );
+        return;
+      }
+
+      const userId = session.user.id;
+
+      const { data, error } = await supabase
+        .from("user-movie-data") // Replace with your Supabase table name
+        .select("rating")
+        .eq("movie_id", movie.id)
+        .eq("user_id", userId)
+        .limit(1) // just in case they have somehow bypassed the unique constraint in supabase
+        .maybeSingle();
+
+      if (error) {
+        console.error("Error loading user rating:", error.message);
+        return;
+      }
+
+      if (data) {
+        setUserRating(data.rating);
+      }
+    } catch (err) {
+      console.error("Unexpected error loading user rating:", err);
+    }
+  };
+
+  useEffect(() => {
+    loadUserRating(); // Load the user's rating when the component mounts
+  }, []);
+
   return (
     <Card className="overflow-hidden rounded-sm border transition-shadow duration-300 hover:shadow-md">
       <div className="relative aspect-[3/4] w-full">
@@ -47,7 +135,10 @@ export function MovieCard({ movie }: MovieCardProps) {
             <button
               key={star}
               className="focus:outline-none"
-              onClick={() => setUserRating(star)}
+              onClick={() => {
+                setUserRating(star);
+                saveRating(star);
+              }}
               onMouseEnter={() => setHoverRating(star)}
               onMouseLeave={() => setHoverRating(null)}
             >
