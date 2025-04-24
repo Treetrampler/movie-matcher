@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
 import { Star } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
+
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -11,7 +12,7 @@ interface Movie {
   title: string;
   rating: number;
   genres: string[];
-  imageUrl: string;
+  imageUrl: string | null;
 }
 
 interface MovieCardProps {

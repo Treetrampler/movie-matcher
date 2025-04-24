@@ -29,6 +29,7 @@ async function fetchGenres() {
 
 async function fetchMovies() {
   const allMovies: any[] = [];
+  const seenIds = new Set<number>(); // Track unique IDs
 
   try {
     const genreMap = await fetchGenres(); // Fetch genres and map them by ID
@@ -43,17 +44,22 @@ async function fetchMovies() {
 
     // Process each page's results
     pages.forEach((data: any) => {
-      const filtered = data.results.map((movie: any) => ({
-        id: movie.id,
-        title: movie.title,
-        rating: movie.vote_average / 2, // Convert 10-star to 5-star scale
-        poster: movie.poster_path
-          ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-          : null,
-        genre_names: movie.genre_ids.map(
-          (id: number) => genreMap[id] || "Unknown",
-        ),
-      }));
+      const filtered = data.results
+        .filter((movie: any) => !seenIds.has(movie.id)) // Skip duplicates
+        .map((movie: any) => {
+          seenIds.add(movie.id); // Add ID to the Set
+          return {
+            id: movie.id,
+            title: movie.title,
+            rating: movie.vote_average / 2, // Convert 10-star to 5-star scale
+            imageUrl: movie.poster_path
+              ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+              : null,
+            genres: movie.genre_ids.map(
+              (id: number) => genreMap[id] || "Unknown",
+            ),
+          };
+        });
       allMovies.push(...filtered);
     });
 
@@ -61,8 +67,13 @@ async function fetchMovies() {
     const filePath = path.join(__dirname, "../data/movies.json");
     fs.writeFileSync(filePath, JSON.stringify(allMovies, null, 2));
 
-    // eslint-disable-next-line no-console
-    console.log(`Done! Saved ${allMovies.length} movies to ${filePath}`);
+    const publicFilePath = path.join(
+      process.cwd(),
+      "public",
+      "data",
+      "movies.json",
+    );
+    fs.copyFileSync(filePath, publicFilePath);
   } catch (error) {
     console.error("Error fetching movies:", error);
   }
