@@ -43,7 +43,7 @@ export function LoginForm({
       });
       if (error) throw error;
       // pushes the user to the main page after login
-      router.push("/protected");
+      router.push("/catalogue");
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
