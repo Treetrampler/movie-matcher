@@ -2,7 +2,7 @@
 
 import { Star } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -71,6 +71,51 @@ export function MovieCard({ movie }: MovieCardProps) {
       console.error("Unexpected error saving rating:", err);
     }
   };
+
+  // Load user rating from Supabase
+  const loadUserRating = async () => {
+    try {
+      const supabase = createClient();
+
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError || !session?.user?.id) {
+        console.error(
+          "Failed to retrieve user session:",
+          sessionError?.message,
+        );
+        return;
+      }
+
+      const userId = session.user.id;
+
+      const { data, error } = await supabase
+        .from("user-movie-data") // Replace with your Supabase table name
+        .select("rating")
+        .eq("movie_id", movie.id)
+        .eq("user_id", userId)
+        .limit(1) // just in case they have somehow bypassed the unique constraint in supabase
+        .maybeSingle();
+
+      if (error) {
+        console.error("Error loading user rating:", error.message);
+        return;
+      }
+
+      if (data) {
+        setUserRating(data.rating);
+      }
+    } catch (err) {
+      console.error("Unexpected error loading user rating:", err);
+    }
+  };
+
+  useEffect(() => {
+    loadUserRating(); // Load the user's rating when the component mounts
+  }, []);
 
   return (
     <Card className="overflow-hidden rounded-sm border transition-shadow duration-300 hover:shadow-md">
