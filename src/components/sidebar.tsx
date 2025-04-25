@@ -2,18 +2,18 @@
 
 import { Aperture, Film, LogOut, User, UserPlus, Users } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
-import { createClient } from "@/utils/supabase/client";
 import { useSignOut } from "@/hooks/handle-signout";
+import { handleCreateGroup } from "@/hooks/handle-create-group";
 
 export function Sidebar() {
   const [isExpanded, setIsExpanded] = useState(false);
   const pathname = usePathname();
-  const router = useRouter();
   const { handleSignOut } = useSignOut();
+  const { createGroup } = handleCreateGroup();
 
   const navItems = [
     { name: "Catalogue", icon: Aperture, href: "/catalogue" },
@@ -32,63 +32,6 @@ export function Sidebar() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [pathname]);
-
-  async function createGroup() {
-    try {
-      const supabase = createClient();
-
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
-
-      if (sessionError || !session?.user?.id) {
-        console.error(
-          "Failed to retrieve user session:",
-          sessionError?.message,
-        );
-        return;
-      }
-
-      const userId = session.user.id;
-
-      // Insert a new group and let Supabase generate the group_id
-      const { data: groupData, error: groupError } = await supabase
-        .from("groups") // Replace with your Supabase table name for groups
-        .insert({ host_id: userId }) // Add any other necessary fields
-        .select("id") // Return the generated group_id
-        .single();
-
-      if (groupError) {
-        console.error("Error creating group:", groupError.message);
-        return;
-      }
-
-      const groupId = groupData.id; // Use the generated group_id
-
-      // Add the user to the groups_users table
-      const { error: userGroupError } = await supabase
-        .from("groups_users") // Replace with your Supabase table name
-        .upsert(
-          {
-            group_id: groupId,
-            user_id: userId,
-            host: true,
-          },
-          { onConflict: "group_id,user_id" },
-        );
-
-      if (userGroupError) {
-        console.error("Error adding user to group:", userGroupError.message);
-      } else {
-        // eslint-disable-next-line no-console
-        console.log("Group created successfully:", groupId);
-        router.push(`/lobby/${groupId}`); // Redirect to the lobby page
-      }
-    } catch (error) {
-      console.error("Error creating group:", error);
-    }
-  }
 
   return (
     <div
