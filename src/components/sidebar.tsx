@@ -15,9 +15,8 @@ export function Sidebar() {
 
   const navItems = [
     { name: "Catalogue", icon: Aperture, href: "/catalogue" },
-    { name: "Create Group", icon: Users, href: "/create-group" },
-    { name: "Join Group", icon: UserPlus, href: "/join-group" },
     { name: "View Profile", icon: User, href: "/profile" },
+    { name: "Join Group", icon: UserPlus, href: "/join-group" },
   ];
 
   // Close sidebar when route changes on mobile
@@ -40,6 +39,63 @@ export function Sidebar() {
       router.refresh();
     } catch (error) {
       console.error("Error signing out:", error);
+    }
+  }
+
+  async function createGroup() {
+    try {
+      const supabase = createClient();
+
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError || !session?.user?.id) {
+        console.error(
+          "Failed to retrieve user session:",
+          sessionError?.message,
+        );
+        return;
+      }
+
+      const userId = session.user.id;
+
+      // Insert a new group and let Supabase generate the group_id
+      const { data: groupData, error: groupError } = await supabase
+        .from("groups") // Replace with your Supabase table name for groups
+        .insert({ host_id: userId }) // Add any other necessary fields
+        .select("id") // Return the generated group_id
+        .single();
+
+      if (groupError) {
+        console.error("Error creating group:", groupError.message);
+        return;
+      }
+
+      const groupId = groupData.id; // Use the generated group_id
+
+      // Add the user to the groups_users table
+      const { error: userGroupError } = await supabase
+        .from("groups_users") // Replace with your Supabase table name
+        .upsert(
+          {
+            group_id: groupId,
+            user_id: userId,
+            host: true,
+          },
+          { onConflict: "group_id,user_id" },
+        );
+
+      if (userGroupError) {
+        console.error("Error adding user to group:", userGroupError.message);
+      } else {
+        // eslint-disable-next-line no-console
+        console.log("Group created successfully:", groupId);
+        router.push(`/lobby/${groupId}`); // Redirect to the lobby page
+      }
+    } catch (error) {
+      console.error("Error creating group:", error);
     }
   }
 
@@ -96,6 +152,23 @@ export function Sidebar() {
               </li>
             );
           })}
+          {/* Create Group Button */}
+          <li>
+            <button
+              onClick={createGroup}
+              className="flex w-full items-center rounded-md px-3 py-2 text-left hover:bg-gray-800"
+            >
+              <Users className="h-5 w-5 flex-shrink-0" />
+              <span
+                className={cn(
+                  "ml-3 whitespace-nowrap transition-opacity duration-200",
+                  isExpanded ? "opacity-100" : "opacity-0",
+                )}
+              >
+                Create Group
+              </span>
+            </button>
+          </li>
           {/* Sign Out Button */}
           <li>
             <button

@@ -85,7 +85,7 @@ export default function LobbyPage() {
             {users.map((user) => (
               <Card
                 key={user.id}
-                className="flex flex-row items-center border-gray-800 bg-neutral-900 p-4"
+                className="flex flex-row items-center border-none bg-neutral-900 p-4"
               >
                 {user.avatar ? (
                   <div className="mr-4 h-10 w-10 overflow-hidden rounded-full">
