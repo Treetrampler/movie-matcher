@@ -2,22 +2,23 @@
 
 import { Aperture, Film, LogOut, User, UserPlus, Users } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
-import { createClient } from "@/utils/supabase/client";
+import { useSignOut } from "@/hooks/handle-signout";
+import { handleCreateGroup } from "@/hooks/handle-create-group";
 
 export function Sidebar() {
   const [isExpanded, setIsExpanded] = useState(false);
   const pathname = usePathname();
-  const router = useRouter();
+  const { handleSignOut } = useSignOut();
+  const { createGroup } = handleCreateGroup();
 
   const navItems = [
     { name: "Catalogue", icon: Aperture, href: "/catalogue" },
-    { name: "Create Group", icon: Users, href: "/create-group" },
-    { name: "Join Group", icon: UserPlus, href: "/join-group" },
     { name: "View Profile", icon: User, href: "/profile" },
+    { name: "Join Group", icon: UserPlus, href: "/join" },
   ];
 
   // Close sidebar when route changes on mobile
@@ -31,17 +32,6 @@ export function Sidebar() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [pathname]);
-
-  async function handleSignOut() {
-    try {
-      const supabase = createClient();
-      await supabase.auth.signOut();
-
-      router.refresh();
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
-  }
 
   return (
     <div
@@ -96,6 +86,23 @@ export function Sidebar() {
               </li>
             );
           })}
+          {/* Create Group Button */}
+          <li>
+            <button
+              onClick={createGroup}
+              className="flex w-full items-center rounded-md px-3 py-2 text-left hover:bg-gray-800"
+            >
+              <Users className="h-5 w-5 flex-shrink-0" />
+              <span
+                className={cn(
+                  "ml-3 whitespace-nowrap transition-opacity duration-200",
+                  isExpanded ? "opacity-100" : "opacity-0",
+                )}
+              >
+                Create Group
+              </span>
+            </button>
+          </li>
           {/* Sign Out Button */}
           <li>
             <button
