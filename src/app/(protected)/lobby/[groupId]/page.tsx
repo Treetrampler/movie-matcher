@@ -6,46 +6,96 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { createClient } from "@/utils/supabase/client";
 
 interface User {
   id: string;
   name: string;
   isHost: boolean;
-  avatar?: string;
+  avatar?: string; // for future if i decide to implement avatars
 }
 
 export default function LobbyPage() {
   const params = useParams();
   const router = useRouter();
   const [users, setUsers] = useState<User[]>([]);
-  const [isHost, setIsHost] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const groupCode = params.groupId as string;
 
-  // Mock data - in a real app, this would come from your backend
-  useEffect(() => {
-    // Simulate fetching users from an API
-    const mockUsers = [
-      {
-        id: "1",
-        name: "You",
-        isHost: true,
-      },
-      {
-        id: "2",
-        name: "John Doe",
-        isHost: false,
-      },
-      {
-        id: "3",
-        name: "Jane Smith",
-        isHost: false,
-      },
-    ];
+  const isHost = false;
 
-    setUsers(mockUsers);
-    // Check if current user is host
-    setIsHost(true); // For demo purposes, we'll assume the current user is the host
+  const supabase = createClient();
+
+  // Fetch initial users in the group
+  const fetchUsers = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("groups_users") // Replace with your table name
+        .select("user_id, host") // Adjust based on your schema
+        .eq("group_id", groupCode);
+
+      if (error) {
+        console.error("Error fetching users:", error.message);
+        return;
+      }
+
+      // Map the data to match the User interface
+      const mappedUsers = data.map((entry: any) => ({
+        id: entry.user_id,
+        name: "test",
+        isHost: entry.host,
+      }));
+
+      setUsers(mappedUsers);
+    } catch (err) {
+      console.error("Unexpected error fetching users:", err);
+    }
+  };
+
+  // Subscribe to real-time updates
+  const subscribeToUsers = () => {
+    const channel = supabase
+      .channel("realtime:groups_users")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "groups_users",
+          filter: `group_id=eq.${groupCode}`,
+        },
+        (payload) => {
+          // eslint-disable-next-line no-console
+          console.log("New user joined:", payload.new);
+
+          // Add the new user to the state
+          const newUser = {
+            id: payload.new.user_id,
+            name: "test",
+            isHost: payload.new.host,
+          };
+
+          setUsers((prevUsers) => [...prevUsers, newUser]);
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  };
+
+  useEffect(() => {
+    // Fetch initial users when the component mounts
+    fetchUsers();
+
+    // Subscribe to real-time updates
+    const unsubscribe = subscribeToUsers();
+
+    // Cleanup subscription on unmount
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   const handleStartSession = () => {
