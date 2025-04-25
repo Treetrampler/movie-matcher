@@ -16,7 +16,7 @@ export function Sidebar() {
   const navItems = [
     { name: "Catalogue", icon: Aperture, href: "/catalogue" },
     { name: "View Profile", icon: User, href: "/profile" },
-    { name: "Join Group", icon: UserPlus, href: "/join-group" },
+    { name: "Join Group", icon: UserPlus, href: "/join" },
   ];
 
   // Close sidebar when route changes on mobile
