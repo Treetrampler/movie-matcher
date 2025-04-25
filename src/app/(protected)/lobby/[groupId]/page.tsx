@@ -7,116 +7,15 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { createClient } from "@/utils/supabase/client";
-
-interface User {
-  id: string;
-  name: string;
-  isHost: boolean;
-  avatar?: string; // for future if i decide to implement avatars
-}
+import { useGroupUsers } from "@/hooks/fetch-users-group";
 
 export default function LobbyPage() {
   const params = useParams();
   const router = useRouter();
-  const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isHost, setIsHost] = useState(false);
   const groupCode = params.groupId as string;
 
-  const supabase = createClient();
-
-  // Fetch initial users in the group
-  const fetchUsers = async () => {
-    try {
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
-
-      if (sessionError || !session?.user?.id) {
-        console.error(
-          "Failed to retrieve user session:",
-          sessionError?.message,
-        );
-        return;
-      }
-
-      const userId = session.user.id;
-
-      const { data, error } = await supabase
-        .from("groups_users") // Replace with your table name
-        .select("user_id, host") // Adjust based on your schema
-        .eq("group_id", groupCode);
-
-      if (error) {
-        console.error("Error fetching users:", error.message);
-        return;
-      }
-
-      // Map the data to match the User interface
-      const mappedUsers = data.map((entry: any) => ({
-        id: entry.user_id,
-        name: "test", // Replace with actual user name if available
-        isHost: entry.host,
-      }));
-
-      setUsers(mappedUsers);
-
-      // Check if the current user is the host
-      const currentUser = data.find((entry: any) => entry.user_id === userId);
-      if (currentUser) {
-        setIsHost(currentUser.host);
-      }
-    } catch (err) {
-      console.error("Unexpected error fetching users:", err);
-    }
-  };
-
-  // Subscribe to real-time updates
-  const subscribeToUsers = () => {
-    const channel = supabase
-      .channel("realtime:groups_users")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "groups_users",
-          filter: `group_id=eq.${groupCode}`,
-        },
-        (payload) => {
-          // eslint-disable-next-line no-console
-          console.log("New user joined:", payload.new);
-
-          // Add the new user to the state
-          const newUser = {
-            id: payload.new.user_id,
-            name: "test",
-            isHost: payload.new.host,
-          };
-
-          setUsers((prevUsers) => [...prevUsers, newUser]);
-        },
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  };
-
-  useEffect(() => {
-    // Fetch initial users when the component mounts
-    fetchUsers();
-
-    // Subscribe to real-time updates
-    const unsubscribe = subscribeToUsers();
-
-    // Cleanup subscription on unmount
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+  const { users, isHost } = useGroupUsers(groupCode);
 
   const handleStartSession = () => {
     setIsLoading(true);
