@@ -20,15 +20,29 @@ export default function LobbyPage() {
   const router = useRouter();
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isHost, setIsHost] = useState(false);
   const groupCode = params.groupId as string;
-
-  const isHost = false;
 
   const supabase = createClient();
 
   // Fetch initial users in the group
   const fetchUsers = async () => {
     try {
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError || !session?.user?.id) {
+        console.error(
+          "Failed to retrieve user session:",
+          sessionError?.message,
+        );
+        return;
+      }
+
+      const userId = session.user.id;
+
       const { data, error } = await supabase
         .from("groups_users") // Replace with your table name
         .select("user_id, host") // Adjust based on your schema
@@ -42,11 +56,17 @@ export default function LobbyPage() {
       // Map the data to match the User interface
       const mappedUsers = data.map((entry: any) => ({
         id: entry.user_id,
-        name: "test",
+        name: "test", // Replace with actual user name if available
         isHost: entry.host,
       }));
 
       setUsers(mappedUsers);
+
+      // Check if the current user is the host
+      const currentUser = data.find((entry: any) => entry.user_id === userId);
+      if (currentUser) {
+        setIsHost(currentUser.host);
+      }
     } catch (err) {
       console.error("Unexpected error fetching users:", err);
     }
