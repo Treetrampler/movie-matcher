@@ -8,15 +8,18 @@ interface User {
   avatar?: string;
 }
 
+// this function is abstracted to improve the readability of the group page
+
 export function useGroupUsers(groupCode: string) {
   const [users, setUsers] = useState<User[]>([]);
   const [isHost, setIsHost] = useState(false);
 
   const supabase = createClient();
 
-  // Fetch initial users in the group
+  //  function to fetch initial users in the group
   const fetchUsers = async () => {
     try {
+      // Retrieve the current user session and ID
       const {
         data: { session },
         error: sessionError,
@@ -30,11 +33,13 @@ export function useGroupUsers(groupCode: string) {
         return;
       }
 
-      const userId = session.user.id;
+      const userId = session.user.id; // get the user id
+
+      // get the users in the group including host info
 
       const { data, error } = await supabase
         .from("groups_users")
-        .select("user_id, host") // Adjust based on your schema
+        .select("user_id, host")
         .eq("group_id", groupCode);
 
       if (error) {
@@ -42,10 +47,10 @@ export function useGroupUsers(groupCode: string) {
         return;
       }
 
-      // Map the data to match the User interface
+      // Map the data to match the User interface (this is a schema type thing)
       const mappedUsers = data.map((entry: any) => ({
         id: entry.user_id,
-        name: "test", // Replace with actual user name if available
+        name: "test", // Replace with actual user name later ***** NOT DONE YET *****
         isHost: entry.host,
       }));
 
@@ -61,8 +66,9 @@ export function useGroupUsers(groupCode: string) {
     }
   };
 
-  // Subscribe to real-time updates
+  // Subscribe to real-time updates so that when a new user joins the group, the page updates (supabase function)
   const subscribeToUsers = () => {
+    // subscribe to supabase channel
     const channel = supabase
       .channel("realtime:groups_users")
       .on(
@@ -79,7 +85,7 @@ export function useGroupUsers(groupCode: string) {
           // Add the new user to the state
           const newUser = {
             id: payload.new.user_id,
-            name: "test", // Replace with actual user name if available
+            name: "test", // Replace with actual user name *** NOT DONE YET ***
             isHost: payload.new.host,
           };
 

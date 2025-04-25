@@ -7,11 +7,13 @@ import { useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
+import { useSignOut } from "@/hooks/handle-signout";
 
 export function Sidebar() {
   const [isExpanded, setIsExpanded] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+  const { handleSignOut } = useSignOut();
 
   const navItems = [
     { name: "Catalogue", icon: Aperture, href: "/catalogue" },
@@ -30,17 +32,6 @@ export function Sidebar() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [pathname]);
-
-  async function handleSignOut() {
-    try {
-      const supabase = createClient();
-      await supabase.auth.signOut();
-
-      router.refresh();
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
-  }
 
   async function createGroup() {
     try {

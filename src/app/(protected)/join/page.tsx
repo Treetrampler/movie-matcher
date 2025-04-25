@@ -7,18 +7,25 @@ import { createClient } from "@/utils/supabase/client";
 import { Button } from "~/ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "~/ui/input-otp";
 
+// this page allows users to join a group using a 6-digit code
+
 export default function Join() {
   const [groupId, setGroupId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
+  // this function handles the join group action, called when the button is clicked
+
   async function handleJoinGroup() {
     if (groupId.length !== 6) {
+      // the user shouldnt be able to submit anyway, but just incase it kicks them out
       console.error("Group ID must be 6 characters long.");
       return;
     }
 
-    setIsSubmitting(true);
+    setIsSubmitting(true); // disables the button to stop spamming
+
+    // retrieve the current user session and ID
 
     const supabase = createClient();
     const {
@@ -32,12 +39,12 @@ export default function Join() {
       return;
     }
 
-    const userId = session.user.id;
+    const userId = session.user.id; // get the id from the session
 
     try {
       // Check if the group exists
       const { data: groupData, error: groupError } = await supabase
-        .from("groups") // Replace with your Supabase table name for groups
+        .from("groups")
         .select("id")
         .eq("id", groupId)
         .single();
@@ -53,7 +60,7 @@ export default function Join() {
 
       // Add the user to the group in the groups_users table
       const { error: userGroupError } = await supabase
-        .from("groups_users") // Replace with your Supabase table name for group-user relationships
+        .from("groups_users")
         .upsert(
           {
             group_id: groupId,
@@ -96,6 +103,8 @@ export default function Join() {
             className="space-x-2"
           >
             <InputOTPGroup>
+              {" "}
+              {/* map 6 digit array to the input boxes for scalability */}
               {[...Array(6)].map((_, index) => (
                 <InputOTPSlot
                   key={index}
