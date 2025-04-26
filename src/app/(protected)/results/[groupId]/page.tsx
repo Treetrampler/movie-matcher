@@ -91,49 +91,59 @@ const runnerUps = [
   },
 ].slice(0, 8); // Ensure exactly 8 runner-ups
 
+const podiumData = [
+  {
+    place: "1st",
+    order: "order-1 md:order-2",
+    icon: <Trophy className="h-10 w-10 text-orange-500" />,
+    height: "h-18", // equivalent to h-18 (which is 4.5rem)
+    width: "w-full max-w-[280px]",
+    textSize: "text-3xl",
+    index: 0,
+  },
+  {
+    place: "2nd",
+    order: "order-2 md:order-1",
+    icon: <Medal className="h-8 w-8 text-orange-400" />,
+    height: "h-16",
+    width: "w-[280px]",
+    textSize: "text-2xl",
+    index: 1,
+  },
+  {
+    place: "3rd",
+    order: "order-3",
+    icon: <Medal className="h-8 w-8 text-orange-300" />,
+    height: "h-14",
+    width: "w-[280px]",
+    textSize: "text-2xl",
+    index: 2,
+  },
+];
+
 export default function ResultsPage() {
   return (
     <div className="container mx-auto h-screen max-w-[95%] px-4 py-8">
       {/* Podium Section */}
       <div className="mb-16 flex max-h-[95vh] flex-col items-end justify-center gap-4 md:flex-row md:gap-8">
-        {/* Second Place */}
-        <div className="order-2 flex flex-col items-center md:order-1">
-          <div className="mb-2">
-            <Medal className="h-8 w-8 text-orange-400" />
+        {podiumData.map((item) => (
+          <div
+            key={item.place}
+            className={`${item.order} flex flex-col items-center`}
+          >
+            <div className="mb-2">{item.icon}</div>
+            <div className="w-full max-w-[280px]">
+              <MovieCard movie={topRecommendations[item.index]} />
+            </div>
+            <div
+              className={`mt-2 flex ${item.height} ${item.width} items-center justify-center rounded-t-lg bg-orange-400`}
+            >
+              <span className={`${item.textSize} font-bold text-black`}>
+                {item.place}
+              </span>
+            </div>
           </div>
-          <div className="w-full max-w-[280px]">
-            <MovieCard movie={topRecommendations[1]} />
-          </div>
-          <div className="mt-2 flex h-16 w-[280px] items-center justify-center rounded-t-lg bg-orange-400">
-            <span className="text-2xl font-bold text-black">2nd</span>
-          </div>
-        </div>
-
-        {/* First Place */}
-        <div className="order-1 flex flex-col items-center md:order-2">
-          <div className="mb-2">
-            <Trophy className="h-10 w-10 text-orange-500" />
-          </div>
-          <div className="w-full max-w-[280px]">
-            <MovieCard movie={topRecommendations[0]} />
-          </div>
-          <div className="mt-2 flex h-18 w-full max-w-[500px] items-center justify-center rounded-t-lg bg-orange-400">
-            <span className="text-3xl font-bold text-black">1st</span>
-          </div>
-        </div>
-
-        {/* Third Place */}
-        <div className="order-3 flex flex-col items-center">
-          <div className="mb-2">
-            <Medal className="h-8 w-8 text-orange-300" />
-          </div>
-          <div className="w-full max-w-[280px]">
-            <MovieCard movie={topRecommendations[2]} />
-          </div>
-          <div className="mt-2 flex h-14 w-[280px] items-center justify-center rounded-t-lg bg-orange-400">
-            <span className="text-2xl font-bold text-black">3rd</span>
-          </div>
-        </div>
+        ))}
       </div>
 
       {/* Runner Ups Section */}
