@@ -1,5 +1,6 @@
 "use client";
-import { Trophy, Medal } from "lucide-react";
+import { Medal, Trophy } from "lucide-react";
+
 import { MovieCard } from "@/components/catalogue/movie-card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
