@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { PasswordInput } from "@/components/auth/password-input";
@@ -38,8 +39,11 @@ export function SignUpForm({
     mode: "onChange",
   });
 
+  const [error, setError] = useState<string | null>(null);
+
   // Handle sign-up form submission
   const handleSignUp = async (data: SignupFormValues) => {
+    setError(null);
     try {
       const { email, password } = data;
 
@@ -56,7 +60,7 @@ export function SignUpForm({
       // Redirect to the sign-up success page
       router.push("/sign-up-success");
     } catch (error: unknown) {
-      console.error("Sign-up error:", error);
+      setError(error instanceof Error ? error.message : "An error occurred");
     }
   };
 
@@ -108,6 +112,8 @@ export function SignUpForm({
                   </p>
                 )}
               </div>
+
+              {error && <p className="text-sm text-red-500">{error}</p>}
 
               {/* Submit Button */}
               <Button
