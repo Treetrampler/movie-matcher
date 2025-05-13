@@ -1,8 +1,10 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 import { PasswordInput } from "@/components/auth/password-input";
 import { Button } from "@/components/ui/button";
@@ -15,55 +17,52 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import type { SignupFormValues } from "@/lib/schemas/auth";
+import { signupSchema } from "@/lib/schemas/auth";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
-
-// this form is abstracted from the signup page for simplicity and optimisation
 
 export function SignUpForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [repeatPassword, setRepeatPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const supabase = createClient();
 
-  // Handle sign up form submission function
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const supabase = createClient();
-    // loading prevents spamming the sign up button
-    setIsLoading(true);
+  // Initialize react-hook-form with Zod schema
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<SignupFormValues>({
+    resolver: zodResolver(signupSchema),
+    mode: "onChange",
+  });
+
+  const [error, setError] = useState<string | null>(null);
+
+  // Handle sign-up form submission
+  const handleSignUp = async (data: SignupFormValues) => {
     setError(null);
-
-    if (password !== repeatPassword) {
-      setError("Passwords do not match");
-      setIsLoading(false);
-      return;
-    }
-
     try {
+      const { email, password } = data;
+
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/protected/catalogue`,
+          emailRedirectTo: `${window.location.origin}/catalogue`,
         },
       });
+
       if (error) throw error;
-      // Redirect to the sign-up success page telling them  to confirm email
+
+      // Redirect to the sign-up success page
       router.push("/sign-up-success");
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
-    } finally {
-      setIsLoading(false);
     }
   };
-
-  // return HTML, has similar PasswordInput to the login form
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -73,48 +72,56 @@ export function SignUpForm({
           <CardDescription>Create a new account</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSignUp}>
+          <form onSubmit={handleSubmit(handleSignUp)}>
             <div className="flex flex-col gap-6">
+              {/* Email Field */}
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="m@example.com"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  {...register("email")}
                 />
+                {errors.email && (
+                  <p className="text-sm text-red-500">{errors.email.message}</p>
+                )}
               </div>
+
+              {/* Password Field */}
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                </div>
-                <PasswordInput
-                  id="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+                <Label htmlFor="password">Password</Label>
+                <PasswordInput id="password" {...register("password")} />
+                {errors.password && (
+                  <p className="text-sm text-red-500">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
+
+              {/* Repeat Password Field */}
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="repeat-password">Repeat Password</Label>
-                </div>
+                <Label htmlFor="confirmPassword">Repeat Password</Label>
                 <PasswordInput
-                  id="repeat-password"
-                  required
-                  value={repeatPassword}
-                  onChange={(e) => setRepeatPassword(e.target.value)}
+                  id="confirmPassword"
+                  {...register("confirmPassword")}
                 />
+                {errors.confirmPassword && (
+                  <p className="text-sm text-red-500">
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
               </div>
+
               {error && <p className="text-sm text-red-500">{error}</p>}
+
+              {/* Submit Button */}
               <Button
                 type="submit"
                 className="w-full bg-orange-400 hover:bg-orange-300"
-                disabled={isLoading}
+                disabled={isSubmitting}
               >
-                {isLoading ? "Creating an account..." : "Sign up"}
+                {isSubmitting ? "Creating an account..." : "Sign up"}
               </Button>
             </div>
             <div className="mt-4 text-center text-sm">

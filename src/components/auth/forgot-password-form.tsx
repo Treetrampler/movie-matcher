@@ -1,7 +1,9 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,43 +15,44 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import type { ForgotPasswordFormValues } from "@/lib/schemas/auth";
+import { forgotPasswordSchema } from "@/lib/schemas/auth";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
-
-// form for resetting password, this is where you input email to send the reset password link
 
 export function ForgotPasswordForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const [email, setEmail] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<ForgotPasswordFormValues>({
+    resolver: zodResolver(forgotPasswordSchema),
+    mode: "onChange",
+  });
+
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
-  // function for handling the logic of sending the reset password link to the email
-
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    // creates the supabase client, sets the button to loading so no more inputs can happen, and sets the error to null
-    const supabase = createClient();
-    setIsLoading(true);
+  // handle the logic of sending the reset password link to the email
+  const handleForgotPassword = async (data: ForgotPasswordFormValues) => {
     setError(null);
+    const supabase = createClient();
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
         redirectTo: `${window.location.origin}/update-password`,
       });
       if (error) throw error;
       setSuccess(true);
+      reset();
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
-    } finally {
-      setIsLoading(false);
     }
   };
-
-  // here is the HTML that is returned, if the success state is true, then it shows the success message, otherwise it shows the form to input the email. This means we don't use a separate page once the email is sent
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -76,7 +79,7 @@ export function ForgotPasswordForm({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleForgotPassword}>
+            <form onSubmit={handleSubmit(handleForgotPassword)}>
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
@@ -84,18 +87,21 @@ export function ForgotPasswordForm({
                     id="email"
                     type="email"
                     placeholder="m@example.com"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    {...register("email")}
                   />
+                  {errors.email && (
+                    <p className="text-sm text-red-500">
+                      {errors.email.message}
+                    </p>
+                  )}
                 </div>
                 {error && <p className="text-sm text-red-500">{error}</p>}
                 <Button
                   type="submit"
                   className="w-full bg-orange-400 hover:bg-orange-300"
-                  disabled={isLoading}
+                  disabled={isSubmitting}
                 >
-                  {isLoading ? "Sending..." : "Send reset email"}
+                  {isSubmitting ? "Sending..." : "Send reset email"}
                 </Button>
               </div>
               <div className="mt-4 text-center text-sm">

@@ -1,7 +1,9 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 import { PasswordInput } from "@/components/auth/password-input";
 import { Button } from "@/components/ui/button";
@@ -13,40 +15,40 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { updatePasswordSchema } from "@/lib/schemas/auth";
+import type { UpdatePasswordFormValues } from "@/lib/schemas/auth";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
-
-// abstracted form component for updating password
 
 export function UpdatePasswordForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  // handle form submission
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const supabase = createClient();
-    setIsLoading(true);
-    setError(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<UpdatePasswordFormValues>({
+    resolver: zodResolver(updatePasswordSchema),
+    mode: "onChange",
+  });
 
+  const onSubmit = async (data: UpdatePasswordFormValues) => {
+    setError(null);
+    const supabase = createClient();
     try {
-      const { error } = await supabase.auth.updateUser({ password });
+      const { error } = await supabase.auth.updateUser({
+        password: data.password,
+      });
       if (error) throw error;
-      // Update this route to redirect to an authenticated route. The user already has an active session.
       router.push("/catalogue");
-    } catch (error: unknown) {
+    } catch (error: any) {
       setError(error instanceof Error ? error.message : "An error occurred");
-    } finally {
-      setIsLoading(false);
     }
   };
-
-  // return HTML, fairly standard
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -58,25 +60,28 @@ export function UpdatePasswordForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleForgotPassword}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="password">New password</Label>
                 <PasswordInput
                   id="password"
                   placeholder="New password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  {...register("password")}
                 />
+                {errors.password && (
+                  <p className="text-sm text-red-500">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
               {error && <p className="text-sm text-red-500">{error}</p>}
               <Button
                 type="submit"
                 className="w-full bg-orange-400 hover:bg-orange-300"
-                disabled={isLoading}
+                disabled={isSubmitting}
               >
-                {isLoading ? "Saving..." : "Save new password"}
+                {isSubmitting ? "Saving..." : "Save new password"}
               </Button>
             </div>
           </form>
