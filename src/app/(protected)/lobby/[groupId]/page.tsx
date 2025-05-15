@@ -2,11 +2,10 @@
 
 import { Crown, UserIcon } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { createClient } from "@/utils/supabase/client";
 import { useGroupUsers } from "@/hooks/fetch-users-group";
 
 export default function LobbyPage() {
