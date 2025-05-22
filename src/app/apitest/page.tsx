@@ -1,8 +1,11 @@
-export async function GET() {
-  const response = await fetch(
-    "https://movie-matcher-git-main-hamishs-projects-e1ebabb3.vercel.app/api/app",
-  );
-  const data = await response.text();
+export default async function Page() {
+  const response = await fetch("http://localhost:5000/api/test");
+  const text = await response.text();
 
-  return new Response(data);
+  return (
+    <main>
+      <h1>Flask API Response</h1>
+      <p>{text}</p>
+    </main>
+  );
 }
