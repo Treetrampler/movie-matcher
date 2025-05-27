@@ -7,11 +7,14 @@ app = Flask(__name__)
 @app.route('/recommend', methods=['POST'])
 def recommend_movies():
     data = request.get_json()
-    user_ratings = data.get('user_ratings', {})  # {movie_id: rating}
+    user_ratings = data.get('user_ratings', {})  # {user_id: {movie_id: rating}}
     all_user_ratings = data.get('all_user_ratings', {})  # {user_id: {movie_id: rating}}
 
     if not user_ratings or not all_user_ratings:
         return jsonify({'error': 'Missing user_ratings or all_user_ratings'}), 400
+
+    if len(user_ratings) > 1:
+        user_ratings = combine_user_ratings(user_ratings)
 
     best_match = None
     best_similarity = -1
@@ -20,7 +23,7 @@ def recommend_movies():
 
     for other_user_id, other_ratings in all_user_ratings.items():
         # Skip comparing the user to themselves if present
-        if data.get("user_id") and other_user_id == data["user_id"]:
+        if data.get("user_id") and other_user_id in data["user_id"]:
             continue
 
         other_movies = set(other_ratings.keys())
@@ -58,3 +61,19 @@ def recommend_movies():
         'similar_user_id': best_match,
         'similarity': best_similarity
     })
+
+def combine_user_ratings(user_ratings):
+    """
+    Combine ratings from multiple users into a single user rating.
+    This is a simple average of the ratings for each movie.
+    """
+    combined_ratings = {}
+    for user_id, ratings in user_ratings.items():
+        for movie_id, rating in ratings.items():
+            if movie_id not in combined_ratings:
+                combined_ratings[movie_id] = []
+            combined_ratings[movie_id].append(rating)
+
+    # Average the ratings
+    averaged_ratings = {movie: np.mean(ratings) for movie, ratings in combined_ratings.items()}
+    return averaged_ratings
