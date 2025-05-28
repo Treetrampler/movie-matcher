@@ -12,6 +12,7 @@ export function useFetchMovieData(userIds: string[]) {
 
   useEffect(() => {
     if (!userIds || userIds.length === 0) {
+      // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
       setUserRatings({});
       return;
     }
@@ -23,7 +24,7 @@ export function useFetchMovieData(userIds: string[]) {
 
       // Adjust table/column names as needed
       const { data: rows, error } = await supabase
-        .from("user_movie_ratings")
+        .from("user-movie-data")
         .select("user_id, movie_id, rating")
         .in("user_id", userIds);
 
@@ -63,7 +64,7 @@ export function useFetchAllUserRatings() {
 
       // Adjust table/column names as needed
       const { data: rows, error } = await supabase
-        .from("user_movie_ratings")
+        .from("user-movie-data")
         .select("user_id, movie_id, rating");
 
       if (error) {

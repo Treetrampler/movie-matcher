@@ -20,7 +20,7 @@ export default function LobbyPage() {
     setIsLoading(true);
     // In a real app, you would make an API call to start the session
     setTimeout(() => {
-      router.push(`/watch/${groupCode}`);
+      router.push(`/results/${groupCode}`);
     }, 1000);
   };
 

@@ -1,96 +1,16 @@
 "use client";
 import { Medal, Trophy } from "lucide-react";
+import { useParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 
 import { MovieCard } from "@/components/catalogue/movie-card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-
-// Mock data for recommended movies
-const topRecommendations = [
-  {
-    id: 1,
-    title: "The Shawshank Redemption",
-    rating: 4.9,
-    genres: ["Drama", "Crime"],
-    imageUrl: "/placeholder.svg?height=400&width=300",
-    position: 1,
-  },
-  {
-    id: 2,
-    title: "The Godfather",
-    rating: 4.8,
-    genres: ["Crime", "Drama"],
-    imageUrl: "/placeholder.svg?height=400&width=300",
-    position: 2,
-  },
-  {
-    id: 3,
-    title: "The Dark Knight",
-    rating: 4.7,
-    genres: ["Action", "Crime", "Drama"],
-    imageUrl: "/placeholder.svg?height=400&width=300",
-    position: 3,
-  },
-];
-
-// Exactly 8 runner-ups
-const runnerUps = [
-  {
-    id: 4,
-    title: "Pulp Fiction",
-    rating: 4.5,
-    genres: ["Crime", "Drama"],
-    imageUrl: "/placeholder.svg?height=400&width=300",
-  },
-  {
-    id: 5,
-    title: "Fight Club",
-    rating: 4.4,
-    genres: ["Drama", "Thriller"],
-    imageUrl: "/placeholder.svg?height=400&width=300",
-  },
-  {
-    id: 6,
-    title: "Inception",
-    rating: 4.5,
-    genres: ["Action", "Sci-Fi", "Thriller"],
-    imageUrl: "/placeholder.svg?height=400&width=300",
-  },
-  {
-    id: 7,
-    title: "The Matrix",
-    rating: 4.4,
-    genres: ["Action", "Sci-Fi"],
-    imageUrl: "/placeholder.svg?height=400&width=300",
-  },
-  {
-    id: 8,
-    title: "Goodfellas",
-    rating: 4.5,
-    genres: ["Biography", "Crime", "Drama"],
-    imageUrl: "/placeholder.svg?height=400&width=300",
-  },
-  {
-    id: 9,
-    title: "Interstellar",
-    rating: 4.6,
-    genres: ["Adventure", "Drama", "Sci-Fi"],
-    imageUrl: "/placeholder.svg?height=400&width=300",
-  },
-  {
-    id: 10,
-    title: "The Silence of the Lambs",
-    rating: 4.3,
-    genres: ["Crime", "Drama", "Thriller"],
-    imageUrl: "/placeholder.svg?height=400&width=300",
-  },
-  {
-    id: 11,
-    title: "The Departed",
-    rating: 4.2,
-    genres: ["Crime", "Drama", "Thriller"],
-    imageUrl: "/placeholder.svg?height=400&width=300",
-  },
-].slice(0, 8); // Ensure exactly 8 runner-ups
+import moviesData from "@/data/movies.json"; // This should be an array of movie objects
+import {
+  useFetchAllUserRatings,
+  useFetchMovieData,
+} from "@/hooks/fetch-movie-data";
+import { useGroupUsers } from "@/hooks/fetch-users-group";
 
 const podiumData = [
   {
@@ -123,6 +43,62 @@ const podiumData = [
 ];
 
 export default function ResultsPage() {
+  const params = useParams();
+  const [recommendation_id, setRecommendation_id] = useState<string[]>([]);
+  const [recommendedMovies, setRecommendedMovies] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const groupCode = params.groupId as string;
+  const { users } = useGroupUsers(groupCode);
+
+  const userIds = useMemo(() => users.map((user) => user.id), [users]);
+  const { userRatings } = useFetchMovieData(userIds);
+  const { allUserRatings } = useFetchAllUserRatings();
+
+  const fetchRecommendations = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("http://localhost:5000/api/recommend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: users.map((user) => user.id),
+          user_ratings: userRatings,
+          all_user_ratings: allUserRatings,
+        }),
+      });
+      const data = await res.json();
+      setRecommendation_id(data.recommendations || []);
+    } catch (err) {
+      console.error("Failed to fetch recommendations:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // Only fetch if all required data is present and not empty
+    if (
+      users.length > 0 &&
+      Object.keys(userRatings).length > 0 &&
+      Object.keys(allUserRatings).length > 0
+    ) {
+      fetchRecommendations();
+    }
+  }, [users, userRatings, allUserRatings]);
+
+  useEffect(() => {
+    const mapped = recommendation_id
+      .map((movieId, idx) => {
+        const movie = moviesData.find((m) => String(m.id) === String(movieId));
+        if (!movie) return null;
+        return { ...movie, position: idx + 1 };
+      })
+      .filter(Boolean);
+    // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
+    setRecommendedMovies(mapped);
+  }, [recommendation_id]);
+
   return (
     <div className="container mx-auto h-screen max-w-[95%] px-4 py-8">
       {/* Podium Section */}
@@ -134,7 +110,9 @@ export default function ResultsPage() {
           >
             <div className="mb-2">{item.icon}</div>
             <div className="w-full max-w-[280px]">
-              <MovieCard movie={topRecommendations[item.index]} />
+              {recommendedMovies[item.index] && (
+                <MovieCard movie={recommendedMovies[item.index]} />
+              )}
             </div>
             <div
               className={`mt-2 flex ${item.height} ${item.width} items-center justify-center rounded-t-lg bg-orange-400`}
@@ -153,7 +131,7 @@ export default function ResultsPage() {
 
         {/* Desktop View: Grid with 2 rows of 4 */}
         <div className="mb-8 hidden grid-cols-2 gap-6 md:grid lg:grid-cols-4">
-          {runnerUps.map((movie) => (
+          {recommendedMovies.slice(3, 11).map((movie) => (
             <div key={movie.id}>
               <MovieCard movie={movie} />
             </div>
@@ -164,7 +142,7 @@ export default function ResultsPage() {
         <div className="mb-8 md:hidden">
           <ScrollArea className="w-full whitespace-nowrap">
             <div className="flex gap-4 pb-4">
-              {runnerUps.map((movie) => (
+              {recommendedMovies.slice(3, 11).map((movie) => (
                 <div key={movie.id} className="w-[200px] flex-shrink-0">
                   <MovieCard movie={movie} />
                 </div>

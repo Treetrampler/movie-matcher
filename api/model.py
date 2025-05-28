@@ -1,20 +1,26 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS  # <-- Add this import
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
 app = Flask(__name__)
+CORS(app)
 
-@app.route('/recommend', methods=['POST'])
+@app.route('/api/recommend', methods=['POST'])
 def recommend_movies():
     data = request.get_json()
+    user_ids = data.get("user_id", [])
     user_ratings = data.get('user_ratings', {})  # {user_id: {movie_id: rating}}
     all_user_ratings = data.get('all_user_ratings', {})  # {user_id: {movie_id: rating}}
 
+    if isinstance(user_ids, str):
+        user_ids = [user_ids]
+    else:
+        user_ratings = combine_user_ratings(user_ratings)
+
     if not user_ratings or not all_user_ratings:
         return jsonify({'error': 'Missing user_ratings or all_user_ratings'}), 400
-
-    if len(user_ratings) > 1:
-        user_ratings = combine_user_ratings(user_ratings)
+        
 
     best_match = None
     best_similarity = -1
@@ -23,7 +29,7 @@ def recommend_movies():
 
     for other_user_id, other_ratings in all_user_ratings.items():
         # Skip comparing the user to themselves if present
-        if data.get("user_id") and other_user_id in data["user_id"]:
+        if user_ids and other_user_id in user_ids:
             continue
 
         other_movies = set(other_ratings.keys())
