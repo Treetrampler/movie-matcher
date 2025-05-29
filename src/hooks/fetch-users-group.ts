@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import { createClient } from "@/utils/supabase/client";
 
 interface User {
@@ -80,8 +81,6 @@ export function useGroupUsers(groupCode: string) {
           filter: `group_id=eq.${groupCode}`,
         },
         (payload) => {
-          console.log("New user joined:", payload.new);
-
           // Add the new user to the state
           const newUser = {
             id: payload.new.user_id,
