@@ -15,7 +15,8 @@ def handler(request):
     if request["method"] != "POST":
         return {
             "statusCode": 405,
-            "body": json.dumps({"error": "Method not allowed"})
+            "headers": { "Content-Type": "application/json" },
+            "body": json.dumps({"error": "Method Not Allowed"})
         }
 
     try:
@@ -23,6 +24,7 @@ def handler(request):
     except Exception:
         return {
             "statusCode": 400,
+            "headers": { "Content-Type": "application/json" },
             "body": json.dumps({"error": "Invalid JSON"})
         }
 
@@ -38,6 +40,7 @@ def handler(request):
     if not user_ratings or not all_user_ratings:
         return {
             "statusCode": 400,
+            "headers": { "Content-Type": "application/json" },
             "body": json.dumps({"error": "Missing user_ratings or all_user_ratings"})
         }
 
@@ -64,11 +67,11 @@ def handler(request):
     if best_match is None:
         return {
             "statusCode": 200,
+            "headers": { "Content-Type": "application/json" },
             "body": json.dumps({
                 "recommendations": [],
                 "reason": "No similar users found"
-            }),
-            "headers": { "Content-Type": "application/json" }
+            })
         }
 
     similar_user_ratings = all_user_ratings[best_match]
