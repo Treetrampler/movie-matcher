@@ -5,9 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { cn } from "@/lib/utils";
-import { useSignOut } from "@/hooks/handle-signout";
 import { handleCreateGroup } from "@/hooks/handle-create-group";
+import { useSignOut } from "@/hooks/handle-signout";
+import { cn } from "@/lib/utils";
 
 export function Sidebar() {
   const [isExpanded, setIsExpanded] = useState(false);
