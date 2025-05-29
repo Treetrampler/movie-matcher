@@ -59,7 +59,7 @@ export default function ResultsPage() {
     setLoading(true);
     try {
       const res = await fetch(
-        "https://movie-matcher-black.vercel.app/api/recommend",
+        "https://movie-matcher-black.vercel.app/api/hostmodel",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
