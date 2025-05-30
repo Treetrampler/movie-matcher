@@ -4,7 +4,17 @@ import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
 app = Flask(__name__)
-CORS(app)
+CORS(
+    app,
+    supports_credentials=True,
+    resources={
+        r"/api/*": {
+            "origins": "*",  # Allow all origins
+            "methods": ["POST"],  # Allow specific methods
+            "allow_headers": ["Content-Type", "Authorization"],  # Allow specific headers
+        }
+    }
+    )
 
 @app.route('/api/recommend', methods=['POST'])
 def recommend_movies():
