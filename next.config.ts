@@ -2,14 +2,12 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   async rewrites() {
-    return process.env.NODE_ENV === "development"
-      ? [
-          {
-            source: "/api/:path*", // matches any /api/* route
-            destination: "/api/*",
-          },
-        ]
-      : [];
+    return [
+      {
+        source: "/api/:path*", // matches any /api/* route
+        destination: "/api/*",
+      },
+    ];
   },
   eslint: {
     ignoreDuringBuilds: true,
