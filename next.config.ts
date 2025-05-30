@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
       ? [
           {
             source: "/api/:path*", // matches any /api/* route
-            destination: "https://movie-matcher-black.vercel.app/api/:path*",
+            destination: "/api/*",
           },
         ]
       : [];
