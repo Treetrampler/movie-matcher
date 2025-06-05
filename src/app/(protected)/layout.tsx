@@ -1,18 +1,12 @@
-import { redirect } from "next/navigation";
 import React from "react";
 
 import { Sidebar } from "@/components/sidebar";
-import checkUser from "@/hooks/check-user";
 
 export default async function ProtectedLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const loggedIn = await checkUser();
-  if (!loggedIn) {
-    redirect("/login");
-  }
   return (
     <div className="flex min-h-screen">
       <Sidebar />
