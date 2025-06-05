@@ -261,16 +261,6 @@
     ]
   },
   {
-    "id": 1252309,
-    "title": "Ask Me What You Want",
-    "rating": 2.95,
-    "imageUrl": "https://image.tmdb.org/t/p/w500/k82T5L1utX1G2LhNWeza9nGUKPk.jpg",
-    "genres": [
-      "Romance",
-      "Drama"
-    ]
-  },
-  {
     "id": 1165067,
     "title": "Cosmic Chaos",
     "rating": 3,
@@ -2356,16 +2346,6 @@
     ]
   },
   {
-    "id": 1445276,
-    "title": "A Love Too Captivating",
-    "rating": 2.5,
-    "imageUrl": "https://image.tmdb.org/t/p/w500/zESBv0bTqtb4ICJ9oYn2HFec8JV.jpg",
-    "genres": [
-      "Romance",
-      "Animation"
-    ]
-  },
-  {
     "id": 502356,
     "title": "The Super Mario Bros. Movie",
     "rating": 3.8115,
@@ -2817,15 +2797,6 @@
     "title": "Mientras Cupido no está",
     "rating": 2.625,
     "imageUrl": "https://image.tmdb.org/t/p/w500/figjQxoiVMNuDJe5wl4nrgAJTDD.jpg",
-    "genres": [
-      "Comedy"
-    ]
-  },
-  {
-    "id": 58008,
-    "title": "Night Nurse",
-    "rating": 2.6555,
-    "imageUrl": "https://image.tmdb.org/t/p/w500/tzhBAhN35YjobVG3Ubm3ERnzhBL.jpg",
     "genres": [
       "Comedy"
     ]
@@ -3471,16 +3442,6 @@
       "Action",
       "Drama",
       "Fantasy",
-      "Romance"
-    ]
-  },
-  {
-    "id": 82023,
-    "title": "Hotel Desire",
-    "rating": 3,
-    "imageUrl": "https://image.tmdb.org/t/p/w500/myzQj8Rk178DrWsiZjVKjz7Kj9P.jpg",
-    "genres": [
-      "Drama",
       "Romance"
     ]
   },
@@ -5290,16 +5251,6 @@
       "Horror",
       "Mystery",
       "Thriller"
-    ]
-  },
-  {
-    "id": 370663,
-    "title": "Below Her Mouth",
-    "rating": 3.3995,
-    "imageUrl": "https://image.tmdb.org/t/p/w500/tPhBftWySbanfEialbsUzOuccgN.jpg",
-    "genres": [
-      "Drama",
-      "Romance"
     ]
   },
   {
@@ -8592,15 +8543,6 @@
     ]
   },
   {
-    "id": 1302004,
-    "title": "Kaskasero",
-    "rating": 3,
-    "imageUrl": "https://image.tmdb.org/t/p/w500/qSpFNnFC3il0bdhyynzJgwlMRnv.jpg",
-    "genres": [
-      "Drama"
-    ]
-  },
-  {
     "id": 466420,
     "title": "Killers of the Flower Moon",
     "rating": 3.715,
@@ -9019,16 +8961,6 @@
       "Animation",
       "Family",
       "Comedy"
-    ]
-  },
-  {
-    "id": 86493,
-    "title": "She Devils of the SS",
-    "rating": 2.509,
-    "imageUrl": "https://image.tmdb.org/t/p/w500/qbH4t4n1xr04ry8GiLCIRCUTRYD.jpg",
-    "genres": [
-      "Drama",
-      "War"
     ]
   },
   {
@@ -9593,15 +9525,6 @@
     "genres": [
       "Horror",
       "Thriller"
-    ]
-  },
-  {
-    "id": 375834,
-    "title": "It's Called 'Murder', Baby",
-    "rating": 3.15,
-    "imageUrl": "https://image.tmdb.org/t/p/w500/3t0AGedAVSiVOu8614okkVRyU1i.jpg",
-    "genres": [
-      "Mystery"
     ]
   },
   {
@@ -10353,15 +10276,6 @@
     "genres": [
       "Action",
       "Adventure"
-    ]
-  },
-  {
-    "id": 318256,
-    "title": "Hot Girls Wanted",
-    "rating": 3.05,
-    "imageUrl": "https://image.tmdb.org/t/p/w500/75ot83QOkc02vujyzmIbumQCU6Y.jpg",
-    "genres": [
-      "Documentary"
     ]
   },
   {
