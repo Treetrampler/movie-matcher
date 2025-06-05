@@ -1,5 +1,5 @@
 "use client";
-import { Medal, Trophy } from "lucide-react";
+import { Loader2, Medal, Trophy } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
@@ -46,7 +46,7 @@ export default function ResultsPage() {
   const params = useParams();
   const [recommendation_id, setRecommendation_id] = useState<string[]>([]);
   const [recommendedMovies, setRecommendedMovies] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const groupCode = params.groupId as string;
   const { users } = useGroupUsers(groupCode);
@@ -56,7 +56,6 @@ export default function ResultsPage() {
   const { allUserRatings } = useFetchAllUserRatings();
 
   const fetchRecommendations = async () => {
-    setLoading(true);
     try {
       const res = await fetch("http://localhost:5000/api/recommend", {
         method: "POST",
@@ -71,8 +70,6 @@ export default function ResultsPage() {
       setRecommendation_id(data.recommendations || []);
     } catch (err) {
       console.error("Failed to fetch recommendations:", err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -97,7 +94,22 @@ export default function ResultsPage() {
       .filter(Boolean);
     // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
     setRecommendedMovies(mapped);
+    setLoading(false);
   }, [recommendation_id]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-neutral-950">
+        <Loader2 className="mb-4 h-12 w-12 animate-spin text-white" />
+        <div className="h-6">
+          <p className="text-lg font-medium text-white">
+            loading results...
+            <span className="animate-blink">|</span>
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto h-screen max-w-[95%] px-4 py-8">
