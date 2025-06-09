@@ -1,9 +1,11 @@
 import { useRouter } from "next/navigation";
+
 import { createClient } from "@/utils/supabase/client";
 
 // abstracted function to create a group, taken out of sidebar.tsx to improve readability
 
 export function handleCreateGroup() {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const router = useRouter();
 
   // function to create group
@@ -30,7 +32,7 @@ export function handleCreateGroup() {
       // Insert a new group and let Supabase generate the group_id using prewritten functions and triggers in supabase that generate random 6 digit code
       const { data: groupData, error: groupError } = await supabase
         .from("groups")
-        .insert({ host_id: userId })
+        .insert({ host_id: userId, activated: false })
         .select("id") // Return the generated group_id
         .single();
 

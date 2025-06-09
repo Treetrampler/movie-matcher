@@ -50,10 +50,6 @@ export default function Join() {
         .single();
 
       if (groupError || !groupData) {
-        console.error(
-          "Group does not exist or an error occurred:",
-          groupError?.message,
-        );
         setIsSubmitting(false);
         return;
       }
@@ -105,7 +101,7 @@ export default function Join() {
             <InputOTPGroup>
               {" "}
               {/* map 6 digit array to the input boxes for scalability */}
-              {[...Array(6)].map((_, index) => (
+              {[...Array.from({ length: 6 })].map((_, index) => (
                 <InputOTPSlot
                   key={index}
                   index={index}

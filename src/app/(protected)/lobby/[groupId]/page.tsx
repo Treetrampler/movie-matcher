@@ -2,11 +2,12 @@
 
 import { Crown, UserIcon } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useGroupUsers } from "@/hooks/fetch-users-group";
+import { createClient } from "@/utils/supabase/client";
 
 export default function LobbyPage() {
   const params = useParams();
@@ -14,15 +15,30 @@ export default function LobbyPage() {
   const [isLoading, setIsLoading] = useState(false);
   const groupCode = params.groupId as string;
 
-  const { users, isHost } = useGroupUsers(groupCode);
+  const { users, isHost, activated } = useGroupUsers(groupCode);
 
-  const handleStartSession = () => {
+  // Function to set activated to true in Supabase
+  const handleStartSession = async () => {
     setIsLoading(true);
-    // In a real app, you would make an API call to start the session
-    setTimeout(() => {
-      router.push(`/results/${groupCode}`);
-    }, 1000);
+    const supabase = createClient();
+    const { error } = await supabase
+      .from("groups")
+      .update({ activated: true })
+      .eq("id", groupCode);
+
+    if (error) {
+      // Handle error as needed
+      setIsLoading(false);
+    }
+    // No need to push here; let the useEffect handle navigation for all users
   };
+
+  // When activated becomes true, push to results page
+  useEffect(() => {
+    if (activated) {
+      router.push(`/results/${groupCode}`);
+    }
+  }, [activated, groupCode, router]);
 
   return (
     <div className="flex min-h-screen flex-col bg-black text-white">
