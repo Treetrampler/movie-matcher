@@ -33,7 +33,6 @@ export function LoginForm({
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    reset,
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
@@ -50,7 +49,6 @@ export function LoginForm({
       });
       if (error) throw error;
       router.push("/catalogue");
-      reset();
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     }
