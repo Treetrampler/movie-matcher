@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import type React from "react";
+import { Toaster } from "sonner";
 
 import "@/app/globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -38,6 +39,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <Toaster
+            richColors
+            position="top-center"
+            style={{ marginLeft: "32px" }} // or whatever your sidebar width is
+          />
         </ThemeProvider>
       </body>
     </html>

@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "~/ui/button";
@@ -45,11 +46,18 @@ export default function Join() {
       // Check if the group exists
       const { data: groupData, error: groupError } = await supabase
         .from("groups")
-        .select("id")
+        .select("id, activated")
         .eq("id", groupId)
         .single();
 
       if (groupError || !groupData) {
+        toast.error("Group not found. Please check the code and try again.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (groupData.activated) {
+        toast.error("Group no longer exists or has already started.");
         setIsSubmitting(false);
         return;
       }
