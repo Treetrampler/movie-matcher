@@ -14,6 +14,7 @@ interface User {
 export function useGroupUsers(groupCode: string) {
   const [users, setUsers] = useState<User[]>([]);
   const [isHost, setIsHost] = useState(false);
+  const [activated, setActivated] = useState<boolean | null>(null);
 
   const supabase = createClient();
 
@@ -67,6 +68,26 @@ export function useGroupUsers(groupCode: string) {
     }
   };
 
+  // Fetch initial activated value
+  const fetchActivated = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("groups")
+        .select("activated")
+        .eq("id", groupCode)
+        .single();
+
+      if (error) {
+        console.error("Error fetching group activation:", error.message);
+        return;
+      }
+
+      setActivated(data?.activated ?? null);
+    } catch (err) {
+      console.error("Unexpected error fetching group activation:", err);
+    }
+  };
+
   // Subscribe to real-time updates so that when a new user joins the group, the page updates (supabase function)
   const subscribeToUsers = () => {
     // subscribe to supabase channel
@@ -98,18 +119,41 @@ export function useGroupUsers(groupCode: string) {
     };
   };
 
-  useEffect(() => {
-    // Fetch initial users when the hook is used
-    fetchUsers();
+  // Subscribe to real-time updates for activated column in groups table
+  const subscribeToActivated = () => {
+    const channel = supabase
+      .channel("realtime:groups_activated")
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "groups",
+          filter: `id=eq.${groupCode}`,
+        },
+        (payload) => {
+          setActivated(payload.new.activated);
+        },
+      )
+      .subscribe();
 
-    // Subscribe to real-time updates
-    const unsubscribe = subscribeToUsers();
-
-    // Cleanup subscription on unmount
     return () => {
-      unsubscribe();
+      supabase.removeChannel(channel);
+    };
+  };
+
+  useEffect(() => {
+    fetchUsers();
+    fetchActivated();
+
+    const unsubscribeUsers = subscribeToUsers();
+    const unsubscribeActivated = subscribeToActivated();
+
+    return () => {
+      unsubscribeUsers();
+      unsubscribeActivated();
     };
   }, [groupCode]);
 
-  return { users, isHost };
+  return { users, isHost, activated };
 }

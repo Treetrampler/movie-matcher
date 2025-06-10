@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "~/ui/button";
@@ -45,15 +46,18 @@ export default function Join() {
       // Check if the group exists
       const { data: groupData, error: groupError } = await supabase
         .from("groups")
-        .select("id")
+        .select("id, activated")
         .eq("id", groupId)
         .single();
 
       if (groupError || !groupData) {
-        console.error(
-          "Group does not exist or an error occurred:",
-          groupError?.message,
-        );
+        toast.error("Group not found. Please check the code and try again.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (groupData.activated) {
+        toast.error("Group no longer exists or has already started.");
         setIsSubmitting(false);
         return;
       }
@@ -71,9 +75,17 @@ export default function Join() {
         );
 
       if (userGroupError) {
-        console.error("Error adding user to group:", userGroupError.message);
-        setIsSubmitting(false);
-        return;
+        if (
+          userGroupError.message.includes(
+            "new row violates row-level security policy (USING expression)",
+          )
+        ) {
+          router.push(`/lobby/${groupId}`); // the user is already in this group, just push them through
+        } else {
+          toast.error("An error occurred");
+          setIsSubmitting(false);
+          return;
+        }
       }
 
       // Navigate to the lobby page
@@ -105,7 +117,7 @@ export default function Join() {
             <InputOTPGroup>
               {" "}
               {/* map 6 digit array to the input boxes for scalability */}
-              {[...Array(6)].map((_, index) => (
+              {[...Array.from({ length: 6 })].map((_, index) => (
                 <InputOTPSlot
                   key={index}
                   index={index}
