@@ -3,6 +3,7 @@
 import { Crown, UserIcon } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -28,6 +29,7 @@ export default function LobbyPage() {
 
     if (error) {
       // Handle error as needed
+      toast.error("Failed to start session, please try again.");
       setIsLoading(false);
     }
     // No need to push here; let the useEffect handle navigation for all users
@@ -36,6 +38,7 @@ export default function LobbyPage() {
   // When activated becomes true, push to results page
   useEffect(() => {
     if (activated) {
+      toast.success("Session started! Redirecting to results...");
       router.push(`/results/${groupCode}`);
     }
   }, [activated, groupCode, router]);

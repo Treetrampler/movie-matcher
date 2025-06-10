@@ -1,4 +1,5 @@
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 import { createClient } from "@/utils/supabase/client";
 
@@ -24,6 +25,7 @@ export function handleCreateGroup() {
           "Failed to retrieve user session:",
           sessionError?.message,
         );
+        toast.error("Failed to create group.");
         return;
       }
 
@@ -37,6 +39,7 @@ export function handleCreateGroup() {
         .single();
 
       if (groupError) {
+        toast.error("Failed to create group.");
         console.error("Error creating group:", groupError.message);
         return;
       }
@@ -57,13 +60,14 @@ export function handleCreateGroup() {
 
       if (userGroupError) {
         console.error("Error adding user to group:", userGroupError.message);
+        toast.error("Failed to create group.");
       } else {
-        // eslint-disable-next-line no-console
-        console.log("Group created successfully:", groupId);
+        toast.success("Group created successfully!");
         router.push(`/lobby/${groupId}`); // Redirect to the lobby page
       }
     } catch (error) {
       console.error("Error creating group:", error);
+      toast.error("Failed to create group.");
     }
   }
 

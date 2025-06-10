@@ -80,16 +80,17 @@ export default function Join() {
             "new row violates row-level security policy (USING expression)",
           )
         ) {
+          toast.success("Rejoined group successfully!");
           router.push(`/lobby/${groupId}`); // the user is already in this group, just push them through
         } else {
           toast.error("An error occurred");
           setIsSubmitting(false);
-          return;
         }
+      } else {
+        // Navigate to the lobby page
+        toast.success("Joined group successfully!");
+        router.push(`/lobby/${groupId}`);
       }
-
-      // Navigate to the lobby page
-      router.push(`/lobby/${groupId}`);
     } catch (error) {
       console.error("Unexpected error while joining group:", error);
     } finally {
