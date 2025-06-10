@@ -75,9 +75,17 @@ export default function Join() {
         );
 
       if (userGroupError) {
-        console.error("Error adding user to group:", userGroupError.message);
-        setIsSubmitting(false);
-        return;
+        if (
+          userGroupError.message.includes(
+            "new row violates row-level security policy (USING expression)",
+          )
+        ) {
+          router.push(`/lobby/${groupId}`); // the user is already in this group, just push them through
+        } else {
+          toast.error("An error occurred");
+          setIsSubmitting(false);
+          return;
+        }
       }
 
       // Navigate to the lobby page
