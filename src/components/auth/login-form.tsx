@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { PasswordInput } from "@/components/auth/password-input";
 import { Button } from "@/components/ui/button";
@@ -47,7 +48,11 @@ export function LoginForm({
         email: data.email,
         password: data.password,
       });
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
+
+      toast.success(`Welcome back, ${data.email.split("@")[0]}!`);
       router.push("/catalogue");
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
