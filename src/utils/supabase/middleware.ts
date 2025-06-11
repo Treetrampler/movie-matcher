@@ -59,6 +59,23 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // Prevent users with activated=true from accessing /onboarding
+  if (user && request.nextUrl.pathname.startsWith("/onboarding")) {
+    // Query the users table for this user's activated status
+    const { data, error } = await supabase
+      .from("users")
+      .select("activated")
+      .eq("user_id", user.id)
+      .single();
+
+    if (!error && data?.activated) {
+      // Redirect to dashboard or home if already onboarded/activated
+      const url = request.nextUrl.clone();
+      url.pathname = "/catalogue";
+      return NextResponse.redirect(url);
+    }
+  }
+
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
   // If you're creating a new response object with NextResponse.next() make sure to:
   // 1. Pass the request in it, like so:

@@ -22,6 +22,7 @@ import { createClient } from "@/utils/supabase/client";
 interface UserInfo {
   name: string;
   age: string;
+  activated: boolean;
 }
 
 interface Movie {
@@ -107,7 +108,11 @@ const PRESET_MOVIES: Movie[] = [
 
 export default function Onboarding() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [userInfo, setUserInfo] = useState<UserInfo>({ name: "", age: "" });
+  const [userInfo, setUserInfo] = useState<UserInfo>({
+    name: "",
+    age: "",
+    activated: false,
+  });
   const router = useRouter();
 
   const handleUserInfoSubmit = (e: React.FormEvent) => {
@@ -136,6 +141,7 @@ export default function Onboarding() {
         user_id: session.user.id,
         name: userInfo.name,
         age: userInfo.age,
+        activated: true,
       },
     ]);
 
@@ -150,10 +156,10 @@ export default function Onboarding() {
 
   if (currentStep === 1) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 p-4">
+      <div className="flex min-h-screen items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold">
+            <CardTitle className="text-2xl font-bold text-orange-400">
               Welcome to MovieMatch!
             </CardTitle>
             <CardDescription>
@@ -197,7 +203,10 @@ export default function Onboarding() {
                   required
                 />
               </div>
-              <Button type="submit" className="w-full">
+              <Button
+                type="submit"
+                className="w-full bg-orange-400 hover:bg-orange-300"
+              >
                 Continue
                 <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
@@ -209,11 +218,13 @@ export default function Onboarding() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
+    <div className="min-h-screen p-4">
       <div className="mx-auto max-w-6xl">
         <div className="mb-8 text-center">
-          <h1 className="mb-2 text-3xl font-bold">Rate These Movies</h1>
-          <p className="text-gray-600">
+          <h1 className="mb-2 text-3xl font-bold text-orange-400">
+            Rate These Movies
+          </h1>
+          <p className="text-gray-400">
             Help us understand your taste by rating these popular movies. Don't
             worry if you haven't seen some of them!
           </p>
@@ -226,7 +237,11 @@ export default function Onboarding() {
         </div>
 
         <div className="text-center">
-          <Button onClick={handleComplete} size="lg" className="px-8">
+          <Button
+            onClick={handleComplete}
+            size="lg"
+            className="bg-orange-400 px-8 hover:bg-orange-300"
+          >
             Complete Setup
             <ChevronRight className="ml-2 h-4 w-4" />
           </Button>
