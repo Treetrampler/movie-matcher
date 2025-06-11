@@ -1,8 +1,10 @@
 "use client";
 
 import { Calendar, ChevronRight, User } from "lucide-react";
+import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { MovieCard } from "@/components/catalogue/movie-card";
 import { Button } from "@/components/ui/button";
@@ -15,6 +17,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { createClient } from "@/utils/supabase/client";
 
 interface UserInfo {
   name: string;
@@ -27,11 +30,6 @@ interface Movie {
   rating: number;
   imageUrl: string;
   genres: string[];
-}
-
-interface MovieRating {
-  movieId: number;
-  rating: number;
 }
 
 const PRESET_MOVIES: Movie[] = [
@@ -110,7 +108,7 @@ const PRESET_MOVIES: Movie[] = [
 export default function Onboarding() {
   const [currentStep, setCurrentStep] = useState(1);
   const [userInfo, setUserInfo] = useState<UserInfo>({ name: "", age: "" });
-  const [movieRatings, setMovieRatings] = useState<MovieRating[]>([]);
+  const router = useRouter();
 
   const handleUserInfoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -119,11 +117,35 @@ export default function Onboarding() {
     }
   };
 
-  const handleComplete = () => {
-    // Here you would typically save the data to your database
-    console.log("User Info:", userInfo);
-    console.log("Movie Ratings:", movieRatings);
-    alert("Onboarding completed! Your taste profile is being created.");
+  const handleComplete = async () => {
+    const supabase = createClient();
+    // Get the current session
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
+    if (sessionError || !session?.user?.id) {
+      toast.error("Failed to retrieve user session. Please log in again.");
+      return;
+    }
+
+    // Insert user info into the users table
+    const { error } = await supabase.from("users").upsert([
+      {
+        user_id: session.user.id,
+        name: userInfo.name,
+        age: userInfo.age,
+      },
+    ]);
+
+    if (error) {
+      toast.error(error.message || "Failed to save user information.");
+      return;
+    }
+
+    toast.success("User information saved successfully!");
+    router.push("/catalogue");
   };
 
   if (currentStep === 1) {
