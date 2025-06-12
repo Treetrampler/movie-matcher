@@ -37,11 +37,10 @@ export function useGroupUsers(groupCode: string) {
 
       const userId = session.user.id; // get the user id
 
-      // get the users in the group including host info
-
+      // Fetch users in the group, including their name from the users table
       const { data, error } = await supabase
         .from("groups_users")
-        .select("user_id, host")
+        .select("user_id, host, users(name)")
         .eq("group_id", groupCode);
 
       if (error) {
@@ -52,7 +51,7 @@ export function useGroupUsers(groupCode: string) {
       // Map the data to match the User interface (this is a schema type thing)
       const mappedUsers = data.map((entry: any) => ({
         id: entry.user_id,
-        name: "test", // Replace with actual user name later ***** NOT DONE YET *****
+        name: entry.users.name ?? "Unknown",
         isHost: entry.host,
       }));
 
@@ -101,11 +100,25 @@ export function useGroupUsers(groupCode: string) {
           table: "groups_users",
           filter: `group_id=eq.${groupCode}`,
         },
-        (payload) => {
-          // Add the new user to the state
+        async (payload) => {
+          // Fetch the user's name from the users table using the user_id
+          let userName = "Unknown";
+          try {
+            const { data: userData, error: userError } = await supabase
+              .from("users")
+              .select("name")
+              .eq("user_id", payload.new.user_id)
+              .single();
+            if (!userError && userData?.name) {
+              userName = userData.name;
+            }
+          } catch (err) {
+            console.error("Error fetching user name for new user:", err);
+          }
+
           const newUser = {
             id: payload.new.user_id,
-            name: "test", // Replace with actual user name *** NOT DONE YET ***
+            name: userName,
             isHost: payload.new.host,
           };
 
