@@ -113,6 +113,7 @@ export default function Onboarding() {
     age: "",
     activated: false,
   });
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleUserInfoSubmit = (e: React.FormEvent) => {
@@ -123,6 +124,7 @@ export default function Onboarding() {
   };
 
   const handleComplete = async () => {
+    setLoading(true);
     const supabase = createClient();
     // Get the current session
     const {
@@ -132,6 +134,7 @@ export default function Onboarding() {
 
     if (sessionError || !session?.user?.id) {
       toast.error("Failed to retrieve user session. Please log in again.");
+      setLoading(false);
       return;
     }
 
@@ -147,11 +150,13 @@ export default function Onboarding() {
 
     if (error) {
       toast.error(error.message || "Failed to save user information.");
+      setLoading(false);
       return;
     }
 
     toast.success("User information saved successfully!");
     router.push("/catalogue");
+    setLoading(false);
   };
 
   if (currentStep === 1) {
@@ -241,8 +246,9 @@ export default function Onboarding() {
             onClick={handleComplete}
             size="lg"
             className="bg-orange-400 px-8 hover:bg-orange-300"
+            disabled={loading}
           >
-            Complete Setup
+            {loading ? "Completing Setup ..." : "Complete Setup"}
             <ChevronRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
