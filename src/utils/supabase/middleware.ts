@@ -49,6 +49,7 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith("/sign-up") &&
     !request.nextUrl.pathname.startsWith("/sign-up-success") &&
     !request.nextUrl.pathname.startsWith("/error") &&
+    !request.nextUrl.pathname.startsWith("/callback") &&
     request.nextUrl.pathname !== "/"
   ) {
     // no user, potentially respond by redirecting the user to the login page
@@ -56,6 +57,48 @@ export async function updateSession(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
+  }
+
+  // Prevent users with activated=true from accessing /onboarding
+  if (user && request.nextUrl.pathname.startsWith("/onboarding")) {
+    // Query the users table for this user's activated status
+    const { data, error } = await supabase
+      .from("users")
+      .select("activated")
+      .eq("user_id", user.id)
+      .single();
+
+    if (!error && data?.activated) {
+      // Redirect to dashboard or home if already onboarded/activated
+      const url = request.nextUrl.clone();
+      url.pathname = "/catalogue";
+      return NextResponse.redirect(url);
+    }
+  }
+
+  // Redirect users who have NOT completed onboarding (activated=false) to /onboarding
+  if (
+    user &&
+    !request.nextUrl.pathname.startsWith("/login") &&
+    !request.nextUrl.pathname.startsWith("/forgot-password") &&
+    !request.nextUrl.pathname.startsWith("/sign-up") &&
+    !request.nextUrl.pathname.startsWith("/sign-up-success") &&
+    !request.nextUrl.pathname.startsWith("/error") &&
+    !request.nextUrl.pathname.startsWith("/callback") &&
+    !request.nextUrl.pathname.startsWith("/onboarding") &&
+    request.nextUrl.pathname !== "/"
+  ) {
+    const { data, error } = await supabase
+      .from("users")
+      .select("activated")
+      .eq("user_id", user.id)
+      .single();
+
+    if (!error && data && !data.activated) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/onboarding";
+      return NextResponse.redirect(url);
+    }
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.

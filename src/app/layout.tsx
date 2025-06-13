@@ -42,7 +42,7 @@ export default function RootLayout({
           <Toaster
             richColors
             position="top-center"
-            style={{ marginLeft: "32px" }} // or whatever your sidebar width is
+            style={{ marginLeft: "32px" }}
           />
         </ThemeProvider>
       </body>

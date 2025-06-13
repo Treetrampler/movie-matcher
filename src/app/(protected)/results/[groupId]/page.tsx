@@ -70,6 +70,8 @@ export default function ResultsPage() {
       setRecommendation_id(data.recommendations || []);
     } catch (err) {
       console.error("Failed to fetch recommendations:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -94,9 +96,28 @@ export default function ResultsPage() {
       .filter(Boolean);
     // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
     setRecommendedMovies(mapped);
-    // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
-    setLoading(false);
   }, [recommendation_id]);
+
+  // get the top rated movies as a fallback if there are no recommendations
+
+  const topRatedMovies = useMemo(() => {
+    return [...moviesData]
+      .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+      .slice(0, 11)
+      .map((movie, idx) => ({ ...movie, position: idx + 1 }));
+  }, [moviesData]);
+
+  const moviesToDisplay = useMemo(() => {
+    if (recommendedMovies.length >= 11) {
+      return recommendedMovies.slice(0, 11);
+    }
+    // Get IDs already in recommendedMovies to avoid duplicates
+    const recommendedIds = new Set(recommendedMovies.map((m) => m.id));
+    // Filter topRatedMovies to only those not already in recommendedMovies
+    const filler = topRatedMovies.filter((m) => !recommendedIds.has(m.id));
+    // Combine and ensure length is 11
+    return [...recommendedMovies, ...filler].slice(0, 11);
+  }, [recommendedMovies, topRatedMovies]);
 
   if (loading) {
     return (
@@ -123,8 +144,8 @@ export default function ResultsPage() {
           >
             <div className="mb-2">{item.icon}</div>
             <div className="w-full max-w-[280px]">
-              {recommendedMovies[item.index] && (
-                <MovieCard movie={recommendedMovies[item.index]} />
+              {moviesToDisplay[item.index] && (
+                <MovieCard movie={moviesToDisplay[item.index]} />
               )}
             </div>
             <div
@@ -144,7 +165,7 @@ export default function ResultsPage() {
 
         {/* Desktop View: Grid with 2 rows of 4 */}
         <div className="mb-8 hidden grid-cols-2 gap-6 md:grid lg:grid-cols-4">
-          {recommendedMovies.slice(3, 11).map((movie) => (
+          {moviesToDisplay.slice(3, 11).map((movie) => (
             <div key={movie.id}>
               <MovieCard movie={movie} />
             </div>
@@ -155,7 +176,7 @@ export default function ResultsPage() {
         <div className="mb-8 md:hidden">
           <ScrollArea className="w-full whitespace-nowrap">
             <div className="flex gap-4 pb-4">
-              {recommendedMovies.slice(3, 11).map((movie) => (
+              {moviesToDisplay.slice(3, 11).map((movie) => (
                 <div key={movie.id} className="w-[200px] flex-shrink-0">
                   <MovieCard movie={movie} />
                 </div>
