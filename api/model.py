@@ -13,6 +13,15 @@ def recommend_movies():
     user_ratings = data.get('user_ratings', {})  # {user_id: {movie_id: rating}}
     all_user_ratings = data.get('all_user_ratings', {})  # {user_id: {movie_id: rating}}
 
+    ratings_exist = False
+    for user, ratings in user_ratings.items():
+        if ratings:
+            ratings_exist = True
+            break
+
+    if not ratings_exist:
+        return jsonify({'recommendations': []}), 200
+
     if isinstance(user_ids, str):
         user_ids = [user_ids]
     else:
@@ -64,7 +73,7 @@ def recommend_movies():
 
     return jsonify({
         'recommendations': [movie for movie, _ in recommendations],
-        'similar_user_id': best_match,
+        'similar_user_id': best_match, #for extra info if needed
         'similarity': best_similarity
     })
 

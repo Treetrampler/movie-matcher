@@ -94,7 +94,7 @@ export async function updateSession(request: NextRequest) {
       .eq("user_id", user.id)
       .single();
 
-    if (!error && data && !data.activated) {
+    if (error || (data && !data.activated)) {
       const url = request.nextUrl.clone();
       url.pathname = "/onboarding";
       return NextResponse.redirect(url);
