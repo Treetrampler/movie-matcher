@@ -103,21 +103,29 @@ export default function ResultsPage() {
   const topRatedMovies = useMemo(() => {
     return [...moviesData]
       .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
-      .slice(0, 11)
+      .slice(0, 50)
       .map((movie, idx) => ({ ...movie, position: idx + 1 }));
   }, [moviesData]);
 
   const moviesToDisplay = useMemo(() => {
-    if (recommendedMovies.length >= 11) {
-      return recommendedMovies.slice(0, 11);
-    }
-    // Get IDs already in recommendedMovies to avoid duplicates
-    const recommendedIds = new Set(recommendedMovies.map((m) => m.id));
-    // Filter topRatedMovies to only those not already in recommendedMovies
-    const filler = topRatedMovies.filter((m) => !recommendedIds.has(m.id));
-    // Combine and ensure length is 11
-    return [...recommendedMovies, ...filler].slice(0, 11);
-  }, [recommendedMovies, topRatedMovies]);
+    // 1. Collect all watched movie IDs from all users
+    const watchedIds = new Set(
+      Object.values(userRatings)
+        .flatMap((ratingsObj) => Object.keys(ratingsObj))
+        .map((id) => Number(id)),
+    );
+
+    // 2. Combine recommended and topRatedMovies, removing duplicates
+    const combined = [
+      ...recommendedMovies,
+      ...topRatedMovies.filter(
+        (m) => !recommendedMovies.some((rm) => rm.id === m.id),
+      ),
+    ];
+
+    // 3. Filter out watched movies and take the first 11
+    return combined.filter((movie) => !watchedIds.has(movie.id)).slice(0, 11);
+  }, [recommendedMovies, topRatedMovies, userRatings]);
 
   if (loading) {
     return (

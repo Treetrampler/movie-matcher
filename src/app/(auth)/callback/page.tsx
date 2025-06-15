@@ -31,17 +31,22 @@ export default function AuthCallback() {
         // Try both "user_id" and "id" depending on your schema
         const { data, error } = await supabase
           .from("users")
-          .select("onboarded")
-          .eq("id", session.user.id)
+          .select("activated")
+          .eq("user_id", session.user.id)
           .single();
 
         if (error || !data) {
-          // If user row doesn't exist, send to onboarding
+          // If user row doesn't exist, send to onboarding and create the row
+          await supabase
+            .from("users")
+            .insert([
+              { user_id: session.user.id, name: "unknown", activated: false },
+            ]);
           router.push("/onboarding");
           return;
         }
 
-        router.push(data.onboarded ? "/dashboard" : "/onboarding");
+        router.push(data.activated ? "/dashboard" : "/onboarding");
       } catch (err) {
         console.error(err);
         router.push("/login");
