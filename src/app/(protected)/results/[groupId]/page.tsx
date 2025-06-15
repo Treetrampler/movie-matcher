@@ -79,7 +79,7 @@ export default function ResultsPage() {
     // Only fetch if all required data is present and not empty
     if (
       users.length > 0 &&
-      Object.keys(userRatings).length > 0 &&
+      Object.keys(userRatings) &&
       Object.keys(allUserRatings).length > 0
     ) {
       fetchRecommendations();
