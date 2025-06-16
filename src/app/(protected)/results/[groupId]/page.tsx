@@ -151,7 +151,7 @@ export default function ResultsPage() {
             className={`${item.order} flex flex-col items-center`}
           >
             <div className="mb-2">{item.icon}</div>
-            <div className="w-full max-w-[280px]">
+            <div className="w-[250px]">
               {moviesToDisplay[item.index] && (
                 <MovieCard movie={moviesToDisplay[item.index]} />
               )}
