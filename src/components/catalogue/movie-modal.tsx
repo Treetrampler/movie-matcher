@@ -47,7 +47,7 @@ export function MovieModal({ movie, isOpen, onClose }: MovieModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
+      <DialogContent className="max-h-[90vh] w-4xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">
             {movie.title}
@@ -86,7 +86,7 @@ export function MovieModal({ movie, isOpen, onClose }: MovieModalProps) {
                             ? star <= hoverRating
                             : star <= roundedRating
                         )
-                          ? "fill-black text-black"
+                          ? "fill-black text-orange-400"
                           : "text-gray-300"
                       }`}
                     />
@@ -115,7 +115,7 @@ export function MovieModal({ movie, isOpen, onClose }: MovieModalProps) {
             {/* Description */}
             <div>
               <h3 className="mb-2 text-lg font-semibold">Description</h3>
-              <p className="leading-relaxed text-gray-700">
+              <p className="leading-relaxed text-white">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
                 enim ad minim veniam, quis nostrud exercitation ullamco laboris
