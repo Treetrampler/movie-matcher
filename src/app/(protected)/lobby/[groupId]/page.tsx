@@ -14,6 +14,7 @@ export default function LobbyPage() {
   const params = useParams();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [trigger, setTrigger] = useState(false);
   const groupCode = params.groupId as string;
 
   const { users, isHost, activated } = useGroupUsers(groupCode);
@@ -27,6 +28,8 @@ export default function LobbyPage() {
       .update({ activated: true })
       .eq("id", groupCode);
 
+    setTrigger(!trigger); // Toggle trigger to re-fetch users and activated state
+
     if (error) {
       // Handle error as needed
       toast.error("Failed to start session, please try again.");
@@ -37,11 +40,11 @@ export default function LobbyPage() {
 
   // When activated becomes true, push to results page
   useEffect(() => {
-    if (activated) {
+    if (activated || trigger) {
       toast.success("Session started! Redirecting to results...");
       router.push(`/results/${groupCode}`);
     }
-  }, [activated, groupCode, router]);
+  }, [activated, groupCode, router, trigger]);
 
   return (
     <div className="flex min-h-screen flex-col bg-black text-white">
