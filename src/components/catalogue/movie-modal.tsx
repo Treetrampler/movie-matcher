@@ -26,6 +26,8 @@ interface MovieModalProps {
   movie: Movie | null;
   isOpen: boolean;
   onClose: () => void;
+  userRating: number | null;
+  setUserRating: (rating: number) => void;
 }
 
 // Mock streaming services data
@@ -37,8 +39,13 @@ const streamingServices = [
   { name: "HBO Max", url: "#", available: false },
 ];
 
-export function MovieModal({ movie, isOpen, onClose }: MovieModalProps) {
-  const [userRating, setUserRating] = useState<number | null>(null);
+export function MovieModal({
+  movie,
+  isOpen,
+  onClose,
+  userRating,
+  setUserRating,
+}: MovieModalProps) {
   const [hoverRating, setHoverRating] = useState<number | null>(null);
 
   if (!movie) return null;
@@ -49,6 +56,8 @@ export function MovieModal({ movie, isOpen, onClose }: MovieModalProps) {
   const handleStarClick = (star: number, e: React.MouseEvent) => {
     e.stopPropagation();
     setUserRating(star);
+    // eslint-disable-next-line ts/no-use-before-define
+    saveRating(star);
   };
 
   // Save user rating to Supabase

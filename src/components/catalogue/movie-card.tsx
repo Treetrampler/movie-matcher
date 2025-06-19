@@ -45,6 +45,8 @@ export function MovieCard({ movie }: MovieCardProps) {
   const handleStarClick = (star: number, e: React.MouseEvent) => {
     e.stopPropagation();
     setUserRating(star);
+    // eslint-disable-next-line ts/no-use-before-define
+    saveRating(star);
   };
 
   // Save user rating to Supabase
@@ -170,7 +172,8 @@ export function MovieCard({ movie }: MovieCardProps) {
                     (
                       hoverRating !== null
                         ? star <= hoverRating
-                        : star <= roundedRating
+                        : star <=
+                          (userRating !== null ? userRating : movie.rating)
                     )
                       ? "fill-grey-800 text-orange-400"
                       : "text-gray-300"
@@ -201,6 +204,8 @@ export function MovieCard({ movie }: MovieCardProps) {
         }}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        userRating={userRating}
+        setUserRating={setUserRating}
       />
     </>
   );
