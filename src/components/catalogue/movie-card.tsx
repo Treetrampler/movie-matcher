@@ -8,6 +8,7 @@ import type React from "react";
 import { MovieModal } from "@/components/catalogue/movie-modal";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { saveMovieRating } from "@/hooks/save-ratings";
 import { createClient } from "@/utils/supabase/client";
 
 interface Movie {
@@ -45,50 +46,7 @@ export function MovieCard({ movie }: MovieCardProps) {
   const handleStarClick = (star: number, e: React.MouseEvent) => {
     e.stopPropagation();
     setUserRating(star);
-    // eslint-disable-next-line ts/no-use-before-define
-    saveRating(star);
-  };
-
-  // Save user rating to Supabase
-  const saveRating = async (rating: number) => {
-    try {
-      const supabase = createClient();
-
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
-
-      if (sessionError || !session?.user?.id) {
-        console.error(
-          "Failed to retrieve user session:",
-          sessionError?.message,
-        );
-        return;
-      }
-
-      const userId = session.user.id;
-
-      const { data, error } = await supabase
-        .from("user-movie-data") // Replace with your Supabase table name
-        .upsert(
-          {
-            movie_id: movie.id,
-            user_id: userId,
-            rating,
-          },
-          { onConflict: "movie_id,user_id" },
-        );
-
-      if (error) {
-        console.error("Error saving rating:", error.message);
-      } else {
-        // eslint-disable-next-line no-console
-        console.log("Rating saved successfully:", data);
-      }
-    } catch (err) {
-      console.error("Unexpected error saving rating:", err);
-    }
+    saveMovieRating(movie.id, star);
   };
 
   // Load user rating from Supabase
@@ -162,7 +120,6 @@ export function MovieCard({ movie }: MovieCardProps) {
                 className="focus:outline-none"
                 onClick={(e) => {
                   handleStarClick(star, e);
-                  saveRating(star);
                 }}
                 onMouseEnter={() => setHoverRating(star)}
                 onMouseLeave={() => setHoverRating(null)}
