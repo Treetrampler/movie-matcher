@@ -27,6 +27,41 @@ async function fetchGenres() {
   }
 }
 
+function isSafeMovie(movie: any): boolean {
+  const lowerTitle = movie.title?.toLowerCase() || "";
+  const lowerOverview = movie.overview?.toLowerCase() || "";
+
+  const bannedKeywords = [
+    "erotic",
+    "sensual",
+    "seduction",
+    "affair",
+    "orgy",
+    "incest",
+    "sex",
+    "sexual",
+    "stripper",
+    "prostitute",
+    "nude",
+    "nudity",
+    "brothel",
+    "swinger",
+    "exchange",
+    "pleasure",
+    "fetish",
+    "bdsm",
+    "lust",
+    "desire",
+    "passion",
+    "affairs",
+    "mistress",
+  ];
+
+  return !bannedKeywords.some(
+    (word) => lowerTitle.includes(word) || lowerOverview.includes(word),
+  );
+}
+
 async function fetchMovies() {
   const allMovies: any[] = [];
   const seenIds = new Set<number>(); // Track unique IDs
@@ -45,7 +80,13 @@ async function fetchMovies() {
     // Process each page's results
     pages.forEach((data: any) => {
       const filtered = data.results
-        .filter((movie: any) => !seenIds.has(movie.id)) // Skip duplicates
+        .filter(
+          (movie: any) =>
+            !seenIds.has(movie.id) &&
+            movie.adult !== true &&
+            movie.original_language === "en" &&
+            isSafeMovie(movie),
+        ) // Skip duplicates and adult content
         .map((movie: any) => {
           seenIds.add(movie.id); // Add ID to the Set
           return {
