@@ -29,12 +29,6 @@ export function MovieCard({ movie }: MovieCardProps) {
   const [hoverRating, setHoverRating] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Calculate the display rating (user rating if set, otherwise the movie's default rating)
-  const displayRating = userRating !== null ? userRating : movie.rating;
-
-  // Round to nearest 0.5 for star display
-  const roundedRating = Math.round(displayRating * 2) / 2;
-
   const handleCardClick = (e: React.MouseEvent) => {
     // Don't open modal if clicking on rating stars
     const target = e.target as HTMLElement;
@@ -142,7 +136,7 @@ export function MovieCard({ movie }: MovieCardProps) {
             <span className="ml-2 text-sm text-gray-600">
               {userRating
                 ? `Your rating: ${userRating}`
-                : `${roundedRating.toFixed(1)}`}
+                : movie.rating.toFixed(1)}
             </span>
           </div>
 
