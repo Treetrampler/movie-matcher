@@ -58,6 +58,7 @@ async function fetchMovies() {
             genres: movie.genre_ids.map(
               (id: number) => genreMap[id] || "Unknown",
             ),
+            description: movie.overview,
           };
         });
       allMovies.push(...filtered);

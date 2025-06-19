@@ -20,6 +20,7 @@ interface Movie {
   rating: number;
   genres: string[];
   imageUrl: string | null;
+  description: string | null;
 }
 
 export function MovieCatalogue() {
