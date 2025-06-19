@@ -4,14 +4,14 @@ import { ExternalLink, Star } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/components/catalogue/dialogue";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 interface Movie {
   id: number;
@@ -47,7 +47,7 @@ export function MovieModal({ movie, isOpen, onClose }: MovieModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-h-[90vh] w-4xl overflow-y-auto">
+      <DialogContent className="max-h-[90vh] w-[80vw] max-w-none overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">
             {movie.title}
