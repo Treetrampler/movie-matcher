@@ -12,6 +12,7 @@ import {
 } from "@/components/catalogue/dialogue";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/utils/supabase/client";
 
 interface Movie {
   id: number;
@@ -45,6 +46,53 @@ export function MovieModal({ movie, isOpen, onClose }: MovieModalProps) {
   const displayRating = userRating !== null ? userRating : movie.rating;
   const roundedRating = Math.round(displayRating * 2) / 2;
 
+  const handleStarClick = (star: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setUserRating(star);
+  };
+
+  // Save user rating to Supabase
+  const saveRating = async (rating: number) => {
+    try {
+      const supabase = createClient();
+
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError || !session?.user?.id) {
+        console.error(
+          "Failed to retrieve user session:",
+          sessionError?.message,
+        );
+        return;
+      }
+
+      const userId = session.user.id;
+
+      const { data, error } = await supabase
+        .from("user-movie-data") // Replace with your Supabase table name
+        .upsert(
+          {
+            movie_id: movie.id,
+            user_id: userId,
+            rating,
+          },
+          { onConflict: "movie_id,user_id" },
+        );
+
+      if (error) {
+        console.error("Error saving rating:", error.message);
+      } else {
+        // eslint-disable-next-line no-console
+        console.log("Rating saved successfully:", data);
+      }
+    } catch (err) {
+      console.error("Unexpected error saving rating:", err);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-h-[90vh] w-[80vw] max-w-none overflow-y-auto">
@@ -75,7 +123,10 @@ export function MovieModal({ movie, isOpen, onClose }: MovieModalProps) {
                   <button
                     key={star}
                     className="focus:outline-none"
-                    onClick={() => setUserRating(star)}
+                    onClick={(e) => {
+                      handleStarClick(star, e);
+                      saveRating(star);
+                    }}
                     onMouseEnter={() => setHoverRating(star)}
                     onMouseLeave={() => setHoverRating(null)}
                   >
@@ -105,7 +156,11 @@ export function MovieModal({ movie, isOpen, onClose }: MovieModalProps) {
               <h3 className="mb-2 text-lg font-semibold">Genres</h3>
               <div className="flex flex-wrap gap-2">
                 {movie.genres.map((genre) => (
-                  <Badge key={genre} variant="outline">
+                  <Badge
+                    key={genre}
+                    variant="outline"
+                    className="border-gray-600"
+                  >
                     {genre}
                   </Badge>
                 ))}
