@@ -18,7 +18,7 @@ interface Movie {
   genres: string[];
   imageUrl: string | null;
   description: string | null;
-  watchLink: string | null;
+  watchLink: string | undefined;
 }
 
 interface MovieCardProps {
