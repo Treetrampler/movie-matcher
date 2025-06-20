@@ -21,6 +21,7 @@ interface Movie {
   genres: string[];
   imageUrl: string;
   description: string | null;
+  watchLink: string | undefined;
 }
 
 interface MovieModalProps {
@@ -30,15 +31,6 @@ interface MovieModalProps {
   userRating: number | null;
   setUserRating: (rating: number) => void;
 }
-
-// Mock streaming services data
-const streamingServices = [
-  { name: "Netflix", url: "#", available: true },
-  { name: "Amazon Prime", url: "#", available: true },
-  { name: "Disney+", url: "#", available: false },
-  { name: "Hulu", url: "#", available: true },
-  { name: "HBO Max", url: "#", available: false },
-];
 
 export function MovieModal({
   movie,
@@ -144,37 +136,16 @@ export function MovieModal({
 
             {/* Where to Watch */}
             <div>
-              <h3 className="mb-3 text-lg font-semibold">Where to Watch</h3>
               <div className="space-y-2">
-                {streamingServices.map((service) => (
-                  <div
-                    key={service.name}
-                    className="flex items-center justify-between"
-                  >
-                    <span
-                      className={
-                        service.available ? "text-black" : "text-gray-400"
-                      }
-                    >
-                      {service.name}
-                    </span>
-                    {service.available ? (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex items-center gap-2"
-                        onClick={() => window.open(service.url, "_blank")}
-                      >
-                        Watch Now
-                        <ExternalLink className="h-4 w-4" />
-                      </Button>
-                    ) : (
-                      <span className="text-sm text-gray-400">
-                        Not Available
-                      </span>
-                    )}
-                  </div>
-                ))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2"
+                  onClick={() => window.open(movie.watchLink, "_blank")}
+                >
+                  Watch Now
+                  <ExternalLink className="h-4 w-4" />
+                </Button>
               </div>
             </div>
           </div>

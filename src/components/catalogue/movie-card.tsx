@@ -18,6 +18,7 @@ interface Movie {
   genres: string[];
   imageUrl: string | null;
   description: string | null;
+  watchLink: string | null;
 }
 
 interface MovieCardProps {
@@ -153,6 +154,7 @@ export function MovieCard({ movie }: MovieCardProps) {
         movie={{
           ...movie,
           imageUrl: movie.imageUrl ?? "/placeholder.svg",
+          watchLink: movie.watchLink ?? "",
         }}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
