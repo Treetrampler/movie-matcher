@@ -9,17 +9,8 @@ import { MovieModal } from "@/components/catalogue/movie-modal";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { saveMovieRating } from "@/hooks/save-ratings";
+import type Movie from "@/lib/schemas/movie";
 import { createClient } from "@/utils/supabase/client";
-
-interface Movie {
-  id: number;
-  title: string;
-  rating: number;
-  genres: string[];
-  imageUrl: string | null;
-  description: string | null;
-  watchLink: string | undefined;
-}
 
 interface MovieCardProps {
   movie: Movie;

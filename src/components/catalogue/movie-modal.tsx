@@ -13,16 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { saveMovieRating } from "@/hooks/save-ratings";
-
-interface Movie {
-  id: number;
-  title: string;
-  rating: number;
-  genres: string[];
-  imageUrl: string;
-  description: string | null;
-  watchLink: string | undefined;
-}
+import type Movie from "@/lib/schemas/movie";
 
 interface MovieModalProps {
   movie: Movie | null;

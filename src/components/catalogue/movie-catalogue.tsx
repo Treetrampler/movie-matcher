@@ -12,16 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-// Define the Movie type
-interface Movie {
-  id: number;
-  title: string;
-  rating: number;
-  genres: string[];
-  imageUrl: string | null;
-  description: string | null;
-}
+import type Movie from "@/lib/schemas/movie";
 
 export function MovieCatalogue() {
   const [movies, setMovies] = useState<Movie[]>([]); // State to store fetched movies
