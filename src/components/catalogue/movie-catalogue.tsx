@@ -130,7 +130,7 @@ export function MovieCatalogue() {
           <Button
             variant="outline"
             onClick={() => setIsFilterModalOpen(true)}
-            className="flex items-center gap-2 hover:border-black"
+            className="flex items-center gap-2 !border-gray-300"
           >
             <SlidersHorizontal size={18} />
             Genres
@@ -150,8 +150,8 @@ export function MovieCatalogue() {
             <SelectContent>
               <SelectItem value="title-asc">Title (A-Z)</SelectItem>
               <SelectItem value="title-desc">Title (Z-A)</SelectItem>
-              <SelectItem value="rating-asc">Rating (Low to High)</SelectItem>
-              <SelectItem value="rating-desc">Rating (High to Low)</SelectItem>
+              <SelectItem value="rating-asc">Rating (L - H)</SelectItem>
+              <SelectItem value="rating-desc">Rating (H - L)</SelectItem>
             </SelectContent>
           </Select>
         </div>

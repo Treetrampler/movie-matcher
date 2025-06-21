@@ -101,6 +101,7 @@ export function FilterModal({
                     id={genre}
                     checked={selectedGenres.includes(genre)}
                     onCheckedChange={() => handleGenreToggle(genre)}
+                    className="border-gray-300"
                   />
                   <label
                     htmlFor={genre}
@@ -128,7 +129,7 @@ export function FilterModal({
                       {genre}
                       <button
                         onClick={() => handleGenreToggle(genre)}
-                        className="ml-1 rounded-full p-0.5 hover:bg-gray-700"
+                        className="ml-1 rounded-full p-0.5 hover:bg-neutral-700"
                       >
                         <X size={12} />
                       </button>
@@ -155,8 +156,9 @@ export function FilterModal({
               Cancel
             </Button>
             <Button
+              variant="outline"
               onClick={handleApplyFilters}
-              className="bg-black text-white hover:bg-gray-800"
+              className="bg-black text-white"
             >
               Apply Filters
             </Button>
