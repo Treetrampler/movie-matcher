@@ -159,19 +159,19 @@ export function MovieCatalogue() {
 
       {/* Active Genre Filters Display */}
       {hasGenreFilters && (
-        <div className="mb-6 rounded-lg bg-gray-50 p-4">
+        <div className="mb-6 rounded-lg bg-neutral-900 p-4">
           <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-sm font-medium">Active Genre Filters:</h3>
+            <h3 className="pl-6 text-sm font-medium">Active Genre Filters:</h3>
             <Button
               variant="ghost"
               size="sm"
               onClick={clearGenreFilters}
-              className="text-gray-600 hover:text-black"
+              className="text-white hover:text-gray-300"
             >
               Clear Genres
             </Button>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 pl-4">
             {genreFilters.selectedGenres.map((genre) => (
               <Badge key={genre} variant="outline">
                 {genre}
