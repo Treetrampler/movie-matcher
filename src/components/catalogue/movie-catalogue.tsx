@@ -82,10 +82,11 @@ export function MovieCatalogue() {
   });
 
   const handleApplyGenreFilters = (newFilters: GenreFilterOptions) => {
+    // Function to handle genre filter application
     setGenreFilters(newFilters);
   };
 
-  const hasGenreFilters = genreFilters.selectedGenres.length > 0;
+  const hasGenreFilters = genreFilters.selectedGenres.length > 0; // Check if there are any genre filters applied
 
   useEffect(() => {
     const handleScroll = () => {
@@ -96,6 +97,7 @@ export function MovieCatalogue() {
       const windowHeight = window.innerHeight;
       const documentHeight = document.documentElement.scrollHeight;
 
+      // Load more movies when scrolled near the bottom, stops the need to load all movies at once
       if (scrollTop + windowHeight >= documentHeight - 90) {
         setVisibleCount((prevCount) => Math.min(prevCount + 20, 989)); // 989 is the total number of movies
       }

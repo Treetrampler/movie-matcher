@@ -45,7 +45,7 @@ export default function LobbyPage() {
   }, [activated, groupCode, router]);
 
   useEffect(() => {
-    router.refresh();
+    router.refresh(); // Refresh the page to ensure activated is updated (bugs with first time users)
   }, [isLoading]);
 
   return (

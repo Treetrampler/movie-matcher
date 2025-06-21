@@ -5,6 +5,8 @@ import { useEffect } from "react";
 
 import { createClient } from "@/utils/supabase/client";
 
+// this page is called when the user confirms their email, it refreshes the session and logs them in
+
 export default function AuthCallback() {
   const router = useRouter();
 
@@ -13,12 +15,12 @@ export default function AuthCallback() {
       const supabase = createClient();
 
       try {
-        const code = new URLSearchParams(window.location.search).get("code");
+        const code = new URLSearchParams(window.location.search).get("code"); // Get the code from the URL query parameters
         if (!code) {
           router.push("/login");
           return;
         }
-        await supabase.auth.exchangeCodeForSession(code);
+        await supabase.auth.exchangeCodeForSession(code); // Exchange the code for a session
         const {
           data: { session },
         } = await supabase.auth.getSession();
@@ -28,7 +30,7 @@ export default function AuthCallback() {
           return;
         }
 
-        // Try both "user_id" and "id" depending on your schema
+        // Check if the user row exists in the database
         const { data, error } = await supabase
           .from("users")
           .select("activated")

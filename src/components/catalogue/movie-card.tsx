@@ -12,6 +12,7 @@ import { saveMovieRating } from "@/hooks/save-ratings";
 import type Movie from "@/lib/schemas/movie";
 import { createClient } from "@/utils/supabase/client";
 
+// Define the props for the MovieCard component
 interface MovieCardProps {
   movie: Movie;
 }
@@ -30,6 +31,7 @@ export function MovieCard({ movie }: MovieCardProps) {
     setIsModalOpen(true);
   };
 
+  // Handle star click to set user rating and save it
   const handleStarClick = (star: number, e: React.MouseEvent) => {
     e.stopPropagation();
     setUserRating(star);
@@ -41,6 +43,7 @@ export function MovieCard({ movie }: MovieCardProps) {
     try {
       const supabase = createClient();
 
+      // Get the current user session
       const {
         data: { session },
         error: sessionError,
@@ -56,8 +59,10 @@ export function MovieCard({ movie }: MovieCardProps) {
 
       const userId = session.user.id;
 
+      // Fetch the user's rating for this movie
+
       const { data, error } = await supabase
-        .from("user-movie-data") // Replace with your Supabase table name
+        .from("user-movie-data")
         .select("rating")
         .eq("movie_id", movie.id)
         .eq("user_id", userId)

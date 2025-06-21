@@ -1,5 +1,6 @@
 "use client";
 
+// Import necessary libraries and components
 import { Calendar, ChevronRight, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type React from "react";
@@ -20,6 +21,7 @@ import { Label } from "@/components/ui/label";
 import PRESET_MOVIES from "@/data/onboarding-movies";
 import { createClient } from "@/utils/supabase/client";
 
+// Define the shape of user info state
 interface UserInfo {
   name: string;
   age: string;
@@ -27,38 +29,49 @@ interface UserInfo {
 }
 
 export default function Onboarding() {
+  // State for tracking the current onboarding step
   const [currentStep, setCurrentStep] = useState(1);
+
+  // State for storing user input (name, age, activated)
   const [userInfo, setUserInfo] = useState<UserInfo>({
     name: "",
     age: "",
     activated: false,
   });
+
+  // State for loading indicator
   const [loading, setLoading] = useState(false);
+
+  // Next.js router for navigation
   const router = useRouter();
 
+  // Handle submission of user info form (step 1)
   const handleUserInfoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (userInfo.name && userInfo.age) {
-      setCurrentStep(2);
+      setCurrentStep(2); // Move to the next step
     }
   };
 
+  // Handle completion of onboarding (step 2)
   const handleComplete = async () => {
     setLoading(true);
     const supabase = createClient();
-    // Get the current session
+
+    // Get the current user session
     const {
       data: { session },
       error: sessionError,
     } = await supabase.auth.getSession();
 
+    // If session retrieval fails, show error and stop
     if (sessionError || !session?.user?.id) {
       toast.error("Failed to retrieve user session. Please log in again.");
       setLoading(false);
       return;
     }
 
-    // Insert user info into the users table
+    // Insert or update user info in the users table, setting activated to true
     const { error } = await supabase.from("users").upsert([
       {
         user_id: session.user.id,
@@ -68,12 +81,14 @@ export default function Onboarding() {
       },
     ]);
 
+    // Handle any errors from the database
     if (error) {
       toast.error(error.message || "Failed to save user information.");
       setLoading(false);
       return;
     }
 
+    // Show success, navigate to catalogue, and stop loading
     toast.success("User information saved successfully!");
     router.push("/catalogue");
     setLoading(false);

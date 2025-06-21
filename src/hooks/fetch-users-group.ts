@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { createClient } from "@/utils/supabase/client";
 
+// define the schema for a user
 interface User {
   id: string;
   name: string;

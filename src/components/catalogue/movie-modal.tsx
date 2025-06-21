@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { saveMovieRating } from "@/hooks/save-ratings";
 import type Movie from "@/lib/schemas/movie";
 
+// Define the props for the MovieModal component
 interface MovieModalProps {
   movie: Movie | null;
   isOpen: boolean;
@@ -32,11 +33,12 @@ export function MovieModal({
 }: MovieModalProps) {
   const [hoverRating, setHoverRating] = useState<number | null>(null);
 
-  if (!movie) return null;
+  if (!movie) return null; // Return null if no movie is provided
 
-  const displayRating = userRating !== null ? userRating : movie.rating;
+  const displayRating = userRating !== null ? userRating : movie.rating; // Use user rating if available, otherwise use movie rating
   const roundedRating = Math.round(displayRating * 2) / 2;
 
+  // Handle star click to set user rating and save it
   const handleStarClick = (star: number, e: React.MouseEvent) => {
     e.stopPropagation();
     setUserRating(star);

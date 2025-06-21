@@ -17,6 +17,7 @@ export interface GenreFilterOptions {
   selectedGenres: string[];
 }
 
+// Define the props for the FilterModal component
 interface FilterModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -24,6 +25,7 @@ interface FilterModalProps {
   currentFilters: GenreFilterOptions;
 }
 
+// Define the available genres for filtering
 const availableGenres = [
   "Action",
   "Adventure",
@@ -62,18 +64,22 @@ export function FilterModal({
     setSelectedGenres(currentFilters.selectedGenres);
   }, [currentFilters]);
 
+  // Toggle genre selection
   const handleGenreToggle = (genre: string) => {
     setSelectedGenres((prev) =>
       prev.includes(genre) ? prev.filter((g) => g !== genre) : [...prev, genre],
     );
   };
 
+  // Apply filters and close the modal
   const handleApplyFilters = () => {
     onApplyFilters({
       selectedGenres,
     });
     onClose();
   };
+
+  // Clear all selected genres
 
   const handleClearFilters = () => {
     setSelectedGenres([]);
