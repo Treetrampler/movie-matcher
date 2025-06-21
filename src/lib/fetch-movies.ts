@@ -6,7 +6,14 @@ import fetch from "node-fetch";
 const API_KEY = process.env.TMDB_API_KEY!;
 const TOTAL_MOVIES = 1000;
 const MOVIES_PER_PAGE = 20;
-const TOTAL_PAGES = Math.ceil(TOTAL_MOVIES / MOVIES_PER_PAGE); // Ensure it's always an integer
+const TOTAL_PAGES = Math.ceil(TOTAL_MOVIES / MOVIES_PER_PAGE);
+
+interface TMDBMoviePage {
+  page: number;
+  total_pages: number;
+  total_results: number;
+  results: any[];
+}
 
 async function fetchGenres() {
   try {
@@ -27,41 +34,114 @@ async function fetchGenres() {
   }
 }
 
+function isSafeMovie(movie: any): boolean {
+  const lowerTitle = movie.title?.toLowerCase() || "";
+  const lowerOverview = movie.overview?.toLowerCase() || "";
+
+  const bannedKeywords = [
+    "erotic",
+    "sensual",
+    "seduction",
+    "affair",
+    "orgy",
+    "incest",
+    "sex",
+    "sexual",
+    "stripper",
+    "prostitute",
+    "nude",
+    "nudity",
+    "brothel",
+    "swinger",
+    "exchange",
+    "pleasure",
+    "fetish",
+    "bdsm",
+    "lust",
+    "desire",
+    "passion",
+    "affairs",
+    "mistress",
+  ];
+
+  return !bannedKeywords.some(
+    (word) => lowerTitle.includes(word) || lowerOverview.includes(word),
+  );
+}
+
+async function fetchWatchLink(movieId: number): Promise<string | null> {
+  try {
+    const res = await fetch(
+      `https://api.themoviedb.org/3/movie/${movieId}/watch/providers?api_key=${API_KEY}`,
+    );
+    const data = (await res.json()) as {
+      results?: Record<
+        string,
+        {
+          link?: string;
+          flatrate?: any[];
+        }
+      >;
+    };
+
+    return data?.results?.AU?.link ?? null;
+  } catch (err) {
+    console.error(`Failed to fetch watch link for movie ${movieId}:`, err);
+    return null;
+  }
+}
+
 async function fetchMovies() {
   const allMovies: any[] = [];
-  const seenIds = new Set<number>(); // Track unique IDs
+  const seenIds = new Set<number>();
 
   try {
-    const genreMap = await fetchGenres(); // Fetch genres and map them by ID
+    const genreMap = await fetchGenres();
+
     // Fetch all pages concurrently
     const fetchPagePromises = Array.from({ length: TOTAL_PAGES }, (_, i) =>
       fetch(
         `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=en-US&page=${i + 1}`,
-      ).then((res) => res.json()),
+      ).then((res) => res.json() as Promise<TMDBMoviePage>),
     );
 
     const pages = await Promise.all(fetchPagePromises);
 
     // Process each page's results
-    pages.forEach((data: any) => {
-      const filtered = data.results
-        .filter((movie: any) => !seenIds.has(movie.id)) // Skip duplicates
-        .map((movie: any) => {
-          seenIds.add(movie.id); // Add ID to the Set
-          return {
-            id: movie.id,
-            title: movie.title,
-            rating: movie.vote_average / 2, // Convert 10-star to 5-star scale
-            imageUrl: movie.poster_path
-              ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-              : null,
-            genres: movie.genre_ids.map(
-              (id: number) => genreMap[id] || "Unknown",
-            ),
-          };
-        });
+    for (const data of pages) {
+      if (!data?.results) continue;
+
+      const filtered = await Promise.all(
+        data.results
+          .filter(
+            (movie: any) =>
+              !seenIds.has(movie.id) &&
+              movie.adult !== true &&
+              movie.original_language === "en" &&
+              isSafeMovie(movie),
+          )
+          .map(async (movie: any) => {
+            seenIds.add(movie.id);
+            const watchLink = await fetchWatchLink(movie.id);
+
+            return {
+              id: movie.id,
+              title: movie.title,
+              rating: movie.vote_average / 2,
+              imageUrl: movie.poster_path
+                ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                : null,
+              genres: movie.genre_ids.map(
+                (id: number) => genreMap[id] || "Unknown",
+              ),
+              description: movie.overview,
+              watchLink,
+            };
+          }),
+      );
+
       allMovies.push(...filtered);
-    });
+    }
 
     // Save to a local file
     const filePath = path.join(__dirname, "../data/movies.json");

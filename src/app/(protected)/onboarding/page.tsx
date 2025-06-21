@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import PRESET_MOVIES from "@/data/onboarding-movies";
 import { createClient } from "@/utils/supabase/client";
 
 interface UserInfo {
@@ -24,87 +25,6 @@ interface UserInfo {
   age: string;
   activated: boolean;
 }
-
-interface Movie {
-  id: number;
-  title: string;
-  rating: number;
-  imageUrl: string;
-  genres: string[];
-}
-
-const PRESET_MOVIES: Movie[] = [
-  {
-    id: 278,
-    title: "The Shawshank Redemption",
-    rating: 4.354,
-    imageUrl: "https://image.tmdb.org/t/p/w500/9cqNxx0GxF0bflZmeSMuL5tnGzr.jpg",
-    genres: ["Drama", "Crime"],
-  },
-  {
-    id: 680,
-    title: "Pulp Fiction",
-    rating: 4.2445,
-    imageUrl: "https://image.tmdb.org/t/p/w500/vQWk5YBFWF4bZaofAbv0tShwBvQ.jpg",
-    genres: ["Thriller", "Crime"],
-  },
-  {
-    id: 155,
-    title: "The Dark Knight",
-    rating: 4.2595,
-    imageUrl: "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
-    genres: ["Drama", "Action", "Crime", "Thriller"],
-  },
-  {
-    id: 13,
-    title: "Forrest Gump",
-    rating: 4.234,
-    imageUrl: "https://image.tmdb.org/t/p/w500/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg",
-    genres: ["Comedy", "Drama", "Romance"],
-  },
-  {
-    id: 27205,
-    title: "Inception",
-    rating: 4.184,
-    imageUrl: "https://image.tmdb.org/t/p/w500/ljsZTbVsrQSqZgWeep2B1QiDKuh.jpg",
-    genres: ["Action", "Science Fiction", "Adventure"],
-  },
-  {
-    id: 920,
-    title: "Cars",
-    rating: 3.497,
-    imageUrl: "https://image.tmdb.org/t/p/w500/2Touk3m5gzsqr1VsvxypdyHY5ci.jpg",
-    genres: ["Animation", "Adventure", "Comedy", "Family"],
-  },
-  {
-    id: 597,
-    title: "Titanic",
-    rating: 3.9525,
-    imageUrl: "https://image.tmdb.org/t/p/w500/9xjZS2rlVxm8SFx8kPC3aIGCOYQ.jpg",
-    genres: ["Drama", "Romance"],
-  },
-  {
-    id: 603,
-    title: "The Matrix",
-    rating: 4.112,
-    imageUrl: "https://image.tmdb.org/t/p/w500/dXNAPwY7VrqMAo51EKhhCJfaGb5.jpg",
-    genres: ["Action", "Science Fiction"],
-  },
-  {
-    id: 299536,
-    title: "Avengers: Infinity War",
-    rating: 4.1175,
-    imageUrl: "https://image.tmdb.org/t/p/w500/7WsyChQLEftFiDOVTGkv3hFpyyt.jpg",
-    genres: ["Adventure", "Action", "Science Fiction"],
-  },
-  {
-    id: 157336,
-    title: "Interstellar",
-    rating: 4.25,
-    imageUrl: "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
-    genres: ["Adventure", "Drama", "Science Fiction"],
-  },
-];
 
 export default function Onboarding() {
   const [currentStep, setCurrentStep] = useState(1);
