@@ -38,10 +38,10 @@ export function useGroupUsers(groupCode: string) {
 
       const userId = session.user.id; // get the user id
 
-      // Fetch users in the group, including their name from the users table
+      // Fetch users in the group, including their name and avatar from the users table
       const { data, error } = await supabase
         .from("groups_users")
-        .select("user_id, host, users(name)")
+        .select("user_id, host, users(name, avatar)")
         .eq("group_id", groupCode);
 
       if (error) {
@@ -49,12 +49,25 @@ export function useGroupUsers(groupCode: string) {
         return;
       }
 
-      // Map the data to match the User interface (this is a schema type thing)
-      const mappedUsers = data.map((entry: any) => ({
-        id: entry.user_id,
-        name: entry.users.name ?? "Unknown",
-        isHost: entry.host,
-      }));
+      // Map the data to match the User interface, generating signed URLs for avatars
+      const mappedUsers = await Promise.all(
+        data.map(async (entry: any) => {
+          // eslint-disable-next-line no-undef-init
+          let avatarUrl: string | undefined = undefined;
+          if (entry.users?.avatar) {
+            const { data: signedUrlData } = await supabase.storage
+              .from("avatars")
+              .createSignedUrl(entry.users.avatar, 60 * 60);
+            avatarUrl = signedUrlData?.signedUrl ?? undefined;
+          }
+          return {
+            id: entry.user_id,
+            name: entry.users?.name ?? "Unknown",
+            isHost: entry.host,
+            avatar: avatarUrl,
+          };
+        }),
+      );
 
       setUsers(mappedUsers);
 
