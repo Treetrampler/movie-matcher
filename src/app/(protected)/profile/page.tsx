@@ -53,25 +53,72 @@ export default function ProfilePage() {
     setIsEditingUsername(false);
   };
 
-  const handleProfilePicUpload = (
+  const handleProfilePicUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0];
-    if (file) {
-      setIsUploading(true);
-      // Simulate upload delay
-      setTimeout(() => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          setProfileData((prev) => ({
-            ...prev,
-            profilePic: e.target?.result as string,
-          }));
-          setIsUploading(false);
-        };
-        reader.readAsDataURL(file);
-      }, 1000);
+    if (!file) return;
+
+    setIsUploading(true);
+    const supabase = createClient();
+
+    // Get user session
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
+    if (sessionError || !session?.user?.id) {
+      toast.error("Could not get user session.");
+      setIsUploading(false);
+      return;
     }
+
+    const userId = session.user.id;
+    const fileExt = file.name.split(".").pop();
+    const filePath = `${userId}.${fileExt}`;
+
+    // Upload to Supabase Storage (private bucket)
+    const { error: uploadError } = await supabase.storage
+      .from("avatars")
+      .upload(filePath, file, { upsert: true });
+
+    if (uploadError) {
+      toast.error(uploadError.message);
+      setIsUploading(false);
+      return;
+    }
+
+    // Generate a signed URL (valid for 1 hour)
+    const { data: signedUrlData, error: signedUrlError } =
+      await supabase.storage.from("avatars").createSignedUrl(filePath, 60 * 60);
+
+    if (signedUrlError || !signedUrlData?.signedUrl) {
+      toast.error("Failed to generate avatar URL.");
+      setIsUploading(false);
+      return;
+    }
+
+    const avatarUrl = signedUrlData.signedUrl;
+
+    // Update user's avatar in the users table
+    const { error: updateError } = await supabase
+      .from("users")
+      .update({ avatar: filePath }) // Store the file path, not the signed URL
+      .eq("user_id", userId);
+
+    if (updateError) {
+      toast.error(updateError.message);
+      setIsUploading(false);
+      return;
+    }
+
+    setProfileData((prev) => ({
+      ...prev,
+      avatar: avatarUrl,
+    }));
+    setIsUploading(false);
+    toast.success("Profile picture updated!");
   };
 
   useEffect(() => {
@@ -132,10 +179,19 @@ export default function ProfilePage() {
       // Set the state
       setWatchedMovies(watchedM);
 
+      // After fetching userData from Supabase
+      let avatarUrl = null;
+      if (userData?.avatar) {
+        const { data: signedUrlData } = await supabase.storage
+          .from("avatars")
+          .createSignedUrl(userData.avatar, 60 * 60);
+        avatarUrl = signedUrlData?.signedUrl ?? null;
+      }
+
       setProfileData({
         email: email ?? "unknown",
         username: userData?.name ?? "unknown",
-        avatar: userData?.avatar ?? null,
+        avatar: avatarUrl ?? null,
       });
     };
 
