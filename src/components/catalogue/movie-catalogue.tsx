@@ -85,10 +85,6 @@ export function MovieCatalogue() {
     setGenreFilters(newFilters);
   };
 
-  const clearGenreFilters = () => {
-    setGenreFilters({ selectedGenres: [] });
-  };
-
   const hasGenreFilters = genreFilters.selectedGenres.length > 0;
 
   useEffect(() => {
@@ -137,7 +133,7 @@ export function MovieCatalogue() {
             {hasGenreFilters && (
               <Badge
                 variant="default"
-                className="ml-1 bg-black text-xs text-white"
+                className="ml-1 bg-neutral-950 text-xs text-white"
               >
                 {genreFilters.selectedGenres.length}
               </Badge>
@@ -156,30 +152,6 @@ export function MovieCatalogue() {
           </Select>
         </div>
       </div>
-
-      {/* Active Genre Filters Display */}
-      {hasGenreFilters && (
-        <div className="mb-6 rounded-lg bg-neutral-900 p-4">
-          <div className="mb-2 flex items-center justify-between">
-            <h3 className="pl-6 text-sm font-medium">Active Genre Filters:</h3>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={clearGenreFilters}
-              className="text-white hover:text-gray-300"
-            >
-              Clear Genres
-            </Button>
-          </div>
-          <div className="flex flex-wrap gap-2 pl-4">
-            {genreFilters.selectedGenres.map((genre) => (
-              <Badge key={genre} variant="outline">
-                {genre}
-              </Badge>
-            ))}
-          </div>
-        </div>
-      )}
 
       {isLoading ? (
         <div className="py-12 text-center text-gray-500">Loading movies...</div>
