@@ -1,12 +1,4 @@
-interface Movie {
-  id: number;
-  title: string;
-  rating: number;
-  imageUrl: string;
-  genres: string[];
-  description: string | null;
-  watchLink: string | undefined;
-}
+import type Movie from "@/lib/schemas/movie";
 
 const PRESET_MOVIES: Movie[] = [
   {
