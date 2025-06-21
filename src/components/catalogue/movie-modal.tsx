@@ -64,10 +64,9 @@ export function MovieModal({
           </div>
 
           {/* Movie Details */}
-          <div className="space-y-6">
+          <div className="space-y-6 py-6">
             {/* Rating Section */}
             <div>
-              <h3 className="mb-2 text-lg font-semibold">Your Rating</h3>
               <div className="mb-2 flex items-center">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
