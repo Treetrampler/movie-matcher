@@ -109,7 +109,7 @@ export default function ProfilePage() {
       // 4. Get watched movies from user-movie-ratings table
       // After fetching watched movie IDs from Supabase:
       const { data: watched, error: watchedError } = await supabase
-        .from("user-movie-ratings")
+        .from("user-movie-data")
         .select("movie_id")
         .eq("user_id", userId);
 
@@ -121,10 +121,13 @@ export default function ProfilePage() {
       // Get the array of watched movie IDs
       const watchedIds = watched?.map((wm) => wm.movie_id) ?? [];
 
-      // Filter the moviesData to only include watched movies
-      const watchedM = moviesData.filter((movie) =>
-        watchedIds.includes(movie.id),
-      );
+      // Filter the moviesData to only include watched movies, ensure they are the right type
+      const watchedM = moviesData
+        .filter((movie) => watchedIds.includes(movie.id))
+        .map((movie) => ({
+          ...movie,
+          watchLink: movie.watchLink === null ? undefined : movie.watchLink,
+        }));
 
       // Set the state
       setWatchedMovies(watchedM);
