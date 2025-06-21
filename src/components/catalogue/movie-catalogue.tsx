@@ -18,7 +18,11 @@ import {
 } from "@/components/ui/select";
 import type Movie from "@/lib/schemas/movie";
 
-export function MovieCatalogue() {
+interface MovieCatalogueProps {
+  movies?: Movie[]; // Optional prop
+}
+
+export function MovieCatalogue({ movies: propMovies }: MovieCatalogueProps) {
   const [movies, setMovies] = useState<Movie[]>([]); // State to store fetched movies
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("title-asc");
@@ -34,6 +38,11 @@ export function MovieCatalogue() {
   // Fetch movies from movies.json
   useEffect(() => {
     async function fetchMovies() {
+      if (propMovies) {
+        setMovies(propMovies);
+        setIsLoading(false);
+        return;
+      }
       try {
         const response = await fetch("/data/movies.json");
         if (!response.ok) {
@@ -49,7 +58,7 @@ export function MovieCatalogue() {
     }
 
     fetchMovies();
-  }, []);
+  }, [propMovies]);
 
   const filteredMovies = movies.filter((movie) => {
     // Filter by search query
