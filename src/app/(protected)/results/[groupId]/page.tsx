@@ -12,6 +12,8 @@ import {
 } from "@/hooks/fetch-movie-data";
 import { useGroupUsers } from "@/hooks/fetch-users-group";
 
+// abstract the presets for the podium to avoid repetition
+
 const podiumData = [
   {
     place: "1st",
@@ -48,14 +50,15 @@ export default function ResultsPage() {
   const [recommendedMovies, setRecommendedMovies] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const groupCode = params.groupId as string;
-  const { users } = useGroupUsers(groupCode);
+  const groupCode = params.groupId as string; // get the group code from the URL parameters
+  const { users } = useGroupUsers(groupCode); // fetch users in the group
 
-  const userIds = useMemo(() => users.map((user) => user.id), [users]);
+  const userIds = useMemo(() => users.map((user) => user.id), [users]); // extract user IDs from the users array
   const { userRatings } = useFetchMovieData(userIds);
   const { allUserRatings } = useFetchAllUserRatings();
 
   const fetchRecommendations = async () => {
+    // fetch recommendations from the backend
     try {
       const res = await fetch("http://localhost:5000/api/recommend", {
         method: "POST",
@@ -87,6 +90,7 @@ export default function ResultsPage() {
   }, [users, userRatings, allUserRatings]);
 
   useEffect(() => {
+    // map the recommendation IDs to movie objects
     const mapped = recommendation_id
       .map((movieId, idx) => {
         const movie = moviesData.find((m) => String(m.id) === String(movieId));

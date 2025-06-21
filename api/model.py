@@ -8,24 +8,24 @@ CORS(app)
 
 @app.route('/api/recommend', methods=['POST'])
 def recommend_movies():
-    data = request.get_json()
-    user_ids = data.get("user_id", [])
-    user_ratings = data.get('user_ratings', {})  # {user_id: {movie_id: rating}}
+    data = request.get_json() # get all the data
+    user_ids = data.get("user_id", []) # This can be a single user_id or a list of user_ids
+    user_ratings = data.get('user_ratings', {})  # {user_id: {movie_id: rating}} 
     all_user_ratings = data.get('all_user_ratings', {})  # {user_id: {movie_id: rating}}
 
-    ratings_exist = False
-    for user, ratings in user_ratings.items():
+    ratings_exist = False # Check if any user has ratings
+    for user, ratings in user_ratings.items(): 
         if ratings:
             ratings_exist = True
             break
 
-    if not ratings_exist:
+    if not ratings_exist: # If no user has ratings, return an empty recommendation
         return jsonify({'recommendations': []}), 200
 
-    if isinstance(user_ids, str):
+    if isinstance(user_ids, str): # If user_ids is a single string, convert it to a list
         user_ids = [user_ids]
     else:
-        user_ratings = combine_user_ratings(user_ratings)
+        user_ratings = combine_user_ratings(user_ratings) # Combine ratings from multiple users into a single user rating
 
     if not user_ratings or not all_user_ratings:
         return jsonify({'error': 'Missing user_ratings or all_user_ratings'}), 400
@@ -34,27 +34,27 @@ def recommend_movies():
     best_match = None
     best_similarity = -1
 
-    user_movies = set(user_ratings.keys())
+    user_movies = set(user_ratings.keys()) 
 
-    for other_user_id, other_ratings in all_user_ratings.items():
+    for other_user_id, other_ratings in all_user_ratings.items(): # Iterate through all users' ratings
         # Skip comparing the user to themselves if present
-        if user_ids and other_user_id in user_ids:
+        if user_ids and other_user_id in user_ids: # dont compare to self
             continue
 
-        other_movies = set(other_ratings.keys())
-        common_movies = user_movies & other_movies
+        other_movies = set(other_ratings.keys())  # Get the movies rated by the other user
+        common_movies = user_movies & other_movies # Find common movies rated by both users
 
         if not common_movies:
             continue
 
         # Create aligned vectors for the common movies
-        u_vec = np.array([user_ratings[m] for m in common_movies])
+        u_vec = np.array([user_ratings[m] for m in common_movies]) 
         o_vec = np.array([other_ratings[m] for m in common_movies])
 
         # Compute cosine similarity
         sim = cosine_similarity([u_vec], [o_vec])[0][0]
 
-        if sim > best_similarity:
+        if sim > best_similarity: # Update best match if this user is more similar
             best_similarity = sim
             best_match = other_user_id
 
