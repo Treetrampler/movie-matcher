@@ -1,8 +1,13 @@
 "use client";
 
+import { Edit2, Save, Upload, X } from "lucide-react";
 import type React from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
-import { useState, useEffect } from "react";
+import { MovieCatalogue } from "@/components/catalogue/movie-catalogue";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,16 +18,10 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Star, Upload, Edit2, Save, X } from "lucide-react";
-import { MovieCard } from "@/components/catalogue/movie-card";
-import { toast } from "sonner";
-import { createClient } from "@/utils/supabase/client";
-import type Movie from "@/lib/schemas/movie";
 import moviesData from "@/data/movies.json";
-import { MovieCatalogue } from "@/components/catalogue/movie-catalogue";
+import type Movie from "@/lib/schemas/movie";
+import { createClient } from "@/utils/supabase/client";
 
 export default function ProfilePage() {
   const [profileData, setProfileData] = useState<{

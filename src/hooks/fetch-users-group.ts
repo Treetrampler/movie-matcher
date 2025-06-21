@@ -167,6 +167,7 @@ export function useGroupUsers(groupCode: string) {
       unsubscribeUsers();
       unsubscribeActivated();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupCode]);
 
   return { users, isHost, activated };

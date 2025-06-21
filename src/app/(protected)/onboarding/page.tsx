@@ -1,10 +1,12 @@
 "use client";
 
 // Import necessary libraries and components
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Calendar, ChevronRight, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { MovieCard } from "@/components/catalogue/movie-card";
@@ -19,41 +21,37 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import PRESET_MOVIES from "@/data/onboarding-movies";
+import { profileSchema } from "@/lib/schemas/profile";
+import type { ProfileFormValues } from "@/lib/schemas/profile";
 import { createClient } from "@/utils/supabase/client";
-
-// Define the shape of user info state
-interface UserInfo {
-  name: string;
-  age: string;
-  activated: boolean;
-}
 
 export default function Onboarding() {
   // State for tracking the current onboarding step
   const [currentStep, setCurrentStep] = useState(1);
-
-  // State for storing user input (name, age, activated)
-  const [userInfo, setUserInfo] = useState<UserInfo>({
-    name: "",
-    age: "",
-    activated: false,
-  });
-
-  // State for loading indicator
   const [loading, setLoading] = useState(false);
-
-  // Next.js router for navigation
   const router = useRouter();
 
-  // Handle submission of user info form (step 1)
-  const handleUserInfoSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (userInfo.name && userInfo.age) {
-      setCurrentStep(2); // Move to the next step
-    }
+  // State for storing user input (name, age, activated)
+  const [userInfo, setUserInfo] = useState<{ name: string; age: number }>({
+    name: "",
+    age: 0,
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileSchema),
+  });
+
+  // Step 1: Profile form submit
+  const onProfileSubmit = (data: ProfileFormValues) => {
+    setUserInfo({ name: data.username, age: data.age });
+    setCurrentStep(2);
   };
 
-  // Handle completion of onboarding (step 2)
+  // Step 2: Complete onboarding
   const handleComplete = async () => {
     setLoading(true);
     const supabase = createClient();
@@ -64,7 +62,6 @@ export default function Onboarding() {
       error: sessionError,
     } = await supabase.auth.getSession();
 
-    // If session retrieval fails, show error and stop
     if (sessionError || !session?.user?.id) {
       toast.error("Failed to retrieve user session. Please log in again.");
       setLoading(false);
@@ -81,14 +78,12 @@ export default function Onboarding() {
       },
     ]);
 
-    // Handle any errors from the database
     if (error) {
       toast.error(error.message || "Failed to save user information.");
       setLoading(false);
       return;
     }
 
-    // Show success, navigate to catalogue, and stop loading
     toast.success("User information saved successfully!");
     router.push("/catalogue");
     setLoading(false);
@@ -108,7 +103,10 @@ export default function Onboarding() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleUserInfoSubmit} className="space-y-4">
+            <form
+              onSubmit={handleSubmit(onProfileSubmit)}
+              className="space-y-4"
+            >
               <div className="space-y-2">
                 <Label htmlFor="name" className="flex items-center gap-2">
                   <User className="h-4 w-4" />
@@ -118,12 +116,14 @@ export default function Onboarding() {
                   id="name"
                   type="text"
                   placeholder="Enter your name"
-                  value={userInfo.name}
-                  onChange={(e) =>
-                    setUserInfo((prev) => ({ ...prev, name: e.target.value }))
-                  }
+                  {...register("username")}
                   required
                 />
+                {errors.username && (
+                  <p className="text-sm text-red-500">
+                    {errors.username.message}
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="age" className="flex items-center gap-2">
@@ -136,16 +136,17 @@ export default function Onboarding() {
                   placeholder="Enter your age"
                   min="13"
                   max="120"
-                  value={userInfo.age}
-                  onChange={(e) =>
-                    setUserInfo((prev) => ({ ...prev, age: e.target.value }))
-                  }
+                  {...register("age", { valueAsNumber: true })}
                   required
                 />
+                {errors.age && (
+                  <p className="text-sm text-red-500">{errors.age.message}</p>
+                )}
               </div>
               <Button
                 type="submit"
                 className="w-full bg-orange-400 hover:bg-orange-300"
+                disabled={isSubmitting}
               >
                 Continue
                 <ChevronRight className="ml-2 h-4 w-4" />
