@@ -362,22 +362,6 @@ export default function ProfilePage() {
                 <Label htmlFor="email">Email</Label>
                 <Input value={profileData.email} disabled />
               </div>
-
-              {/* Password */}
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <div className="flex items-center space-x-2">
-                  <Input
-                    type="password"
-                    value="*********"
-                    disabled
-                    className="flex-1"
-                  />
-                  <Button size="sm" variant="outline">
-                    Change Password
-                  </Button>
-                </div>
-              </div>
             </div>
           </CardContent>
         </Card>
