@@ -3,7 +3,11 @@
 import { Search, SlidersHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { FilterModal } from "@/components/catalogue/filter-modal";
+import type { GenreFilterOptions } from "@/components/catalogue/filter-modal";
 import { MovieCard } from "@/components/catalogue/movie-card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -20,6 +24,10 @@ export function MovieCatalogue() {
   const [sortOption, setSortOption] = useState("title-asc");
   const [isLoading, setIsLoading] = useState(true); // State to track loading
   const [visibleCount, setVisibleCount] = useState(20); // State to track visible movies
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [genreFilters, setGenreFilters] = useState<GenreFilterOptions>({
+    selectedGenres: [],
+  });
 
   const error = null; // Placeholder for error handling
 
@@ -43,10 +51,19 @@ export function MovieCatalogue() {
     fetchMovies();
   }, []);
 
-  // Filter movies based on search query
-  const filteredMovies = movies.filter((movie) =>
-    movie.title.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const filteredMovies = movies.filter((movie) => {
+    // Filter by search query
+    const matchesSearch = movie.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+
+    // Filter by genres (if any genres are selected, movie must have at least one matching genre)
+    const matchesGenres =
+      genreFilters.selectedGenres.length === 0 ||
+      genreFilters.selectedGenres.some((genre) => movie.genres.includes(genre));
+
+    return matchesSearch && matchesGenres;
+  });
 
   // Sort movies based on selected option
   const sortedMovies = [...filteredMovies].sort((a, b) => {
@@ -64,6 +81,16 @@ export function MovieCatalogue() {
     }
   });
 
+  const handleApplyGenreFilters = (newFilters: GenreFilterOptions) => {
+    setGenreFilters(newFilters);
+  };
+
+  const clearGenreFilters = () => {
+    setGenreFilters({ selectedGenres: [] });
+  };
+
+  const hasGenreFilters = genreFilters.selectedGenres.length > 0;
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop =
@@ -74,7 +101,7 @@ export function MovieCatalogue() {
       const documentHeight = document.documentElement.scrollHeight;
 
       if (scrollTop + windowHeight >= documentHeight - 90) {
-        setVisibleCount((prevCount) => Math.min(prevCount + 20, 989)); // change 989 to the total number of movies
+        setVisibleCount((prevCount) => Math.min(prevCount + 20, 989)); // 989 is the total number of movies
       }
     };
 
@@ -100,7 +127,22 @@ export function MovieCatalogue() {
           />
         </div>
         <div className="flex items-center gap-2">
-          <SlidersHorizontal size={18} className="text-gray-700" />
+          <Button
+            variant="outline"
+            onClick={() => setIsFilterModalOpen(true)}
+            className="flex items-center gap-2 !border-gray-300"
+          >
+            <SlidersHorizontal size={18} />
+            Genres
+            {hasGenreFilters && (
+              <Badge
+                variant="default"
+                className="ml-1 bg-black text-xs text-white"
+              >
+                {genreFilters.selectedGenres.length}
+              </Badge>
+            )}
+          </Button>
           <Select value={sortOption} onValueChange={setSortOption}>
             <SelectTrigger className="w-[180px] border-gray-300 focus:border-black focus:ring-black">
               <SelectValue placeholder="Sort by" />
@@ -108,12 +150,36 @@ export function MovieCatalogue() {
             <SelectContent>
               <SelectItem value="title-asc">Title (A-Z)</SelectItem>
               <SelectItem value="title-desc">Title (Z-A)</SelectItem>
-              <SelectItem value="rating-asc">Rating (Low to High)</SelectItem>
-              <SelectItem value="rating-desc">Rating (High to Low)</SelectItem>
+              <SelectItem value="rating-asc">Rating (L - H)</SelectItem>
+              <SelectItem value="rating-desc">Rating (H - L)</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
+
+      {/* Active Genre Filters Display */}
+      {hasGenreFilters && (
+        <div className="mb-6 rounded-lg bg-neutral-900 p-4">
+          <div className="mb-2 flex items-center justify-between">
+            <h3 className="pl-6 text-sm font-medium">Active Genre Filters:</h3>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearGenreFilters}
+              className="text-white hover:text-gray-300"
+            >
+              Clear Genres
+            </Button>
+          </div>
+          <div className="flex flex-wrap gap-2 pl-4">
+            {genreFilters.selectedGenres.map((genre) => (
+              <Badge key={genre} variant="outline">
+                {genre}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
 
       {isLoading ? (
         <div className="py-12 text-center text-gray-500">Loading movies...</div>
@@ -130,6 +196,13 @@ export function MovieCatalogue() {
           ))}
         </div>
       )}
+      {/* Genre Filter Modal */}
+      <FilterModal
+        isOpen={isFilterModalOpen}
+        onClose={() => setIsFilterModalOpen(false)}
+        onApplyFilters={handleApplyGenreFilters}
+        currentFilters={genreFilters}
+      />
     </div>
   );
 }
