@@ -1,8 +1,10 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Edit2, Save, Upload, X } from "lucide-react";
-import type React from "react";
 import { useEffect, useState } from "react";
+import type React from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { MovieCatalogue } from "@/components/catalogue/movie-catalogue";
@@ -21,6 +23,8 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import moviesData from "@/data/movies.json";
 import type Movie from "@/lib/schemas/movie";
+import type { ProfileFormValues } from "@/lib/schemas/profile";
+import { profileSchema } from "@/lib/schemas/profile";
 import { createClient } from "@/utils/supabase/client";
 
 export default function ProfilePage() {
@@ -35,22 +39,57 @@ export default function ProfilePage() {
   });
   const [watchedMovies, setWatchedMovies] = useState<Movie[]>([]);
   const [isEditingUsername, setIsEditingUsername] = useState(false);
-  const [tempUsername, setTempUsername] = useState(profileData.username);
   const [isUploading, setIsUploading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      username: profileData.username,
+    },
+  });
 
   const handleUsernameEdit = () => {
     setIsEditingUsername(true);
-    setTempUsername(profileData.username);
   };
 
-  const handleUsernameSave = () => {
-    setProfileData((prev) => ({ ...prev, username: tempUsername }));
-    setIsEditingUsername(false);
-  };
+  const handleUpdateUsername = async (newUsername: string) => {
+    const supabase = createClient();
 
-  const handleUsernameCancel = () => {
-    setTempUsername(profileData.username);
+    // Get user session
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
+    if (sessionError || !session?.user?.id) {
+      toast.error("Could not get user session.");
+      return;
+    }
+
+    const userId = session.user.id;
+
+    // Update username in Supabase
+    const { error: updateError } = await supabase
+      .from("users")
+      .update({ name: newUsername })
+      .eq("user_id", userId);
+
+    if (updateError) {
+      toast.error("Failed to update username.");
+      return;
+    }
+
+    setProfileData((prev) => ({
+      ...prev,
+      username: newUsername,
+    }));
     setIsEditingUsername(false);
+    reset({ username: newUsername, age: 18 });
+    toast.success("Username updated!");
   };
 
   const handleProfilePicUpload = async (
@@ -179,7 +218,7 @@ export default function ProfilePage() {
       // Set the state
       setWatchedMovies(watchedM);
 
-      // After fetching userData from Supabase
+      // After fetching userData from Supabase get a signed URL for the avatar
       let avatarUrl = null;
       if (userData?.avatar) {
         const { data: signedUrlData } = await supabase.storage
@@ -192,6 +231,10 @@ export default function ProfilePage() {
         email: email ?? "unknown",
         username: userData?.name ?? "unknown",
         avatar: avatarUrl ?? null,
+      });
+      // Reset the form with the loaded username
+      reset({
+        username: userData?.name ?? "unknown",
       });
     };
 
@@ -263,23 +306,38 @@ export default function ProfilePage() {
                 <Label htmlFor="username">Username</Label>
                 <div className="flex items-center space-x-2">
                   {isEditingUsername ? (
-                    <>
+                    <form
+                      onSubmit={handleSubmit((data) =>
+                        handleUpdateUsername(data.username),
+                      )}
+                      className="flex w-full items-center space-x-2"
+                    >
                       <Input
-                        value={tempUsername}
-                        onChange={(e) => setTempUsername(e.target.value)}
+                        {...register("username")}
                         className="flex-1"
+                        autoFocus
+                        disabled={isSubmitting}
                       />
-                      <Button size="sm" onClick={handleUsernameSave}>
+                      <Button size="sm" type="submit" disabled={isSubmitting}>
                         <Save className="h-4 w-4" />
                       </Button>
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={handleUsernameCancel}
+                        type="button"
+                        onClick={() => {
+                          setIsEditingUsername(false);
+                          reset({ username: profileData.username, age: 18 });
+                        }}
                       >
                         <X className="h-4 w-4" />
                       </Button>
-                    </>
+                      {errors.username && (
+                        <p className="text-sm text-red-500">
+                          {errors.username.message}
+                        </p>
+                      )}
+                    </form>
                   ) : (
                     <>
                       <Input
