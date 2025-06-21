@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import { createClient } from "@/utils/supabase/client";
 import type Movie from "@/lib/schemas/movie";
 import moviesData from "@/data/movies.json";
+import { MovieCatalogue } from "@/components/catalogue/movie-catalogue";
 
 export default function ProfilePage() {
   const [profileData, setProfileData] = useState<{
@@ -189,7 +190,9 @@ export default function ProfilePage() {
                 )}
               </div>
               <div className="space-y-1">
-                <h3 className="text-lg font-semibold">Profile Picture</h3>
+                <h3 className="text-lg font-semibold">
+                  {profileData.username}
+                </h3>
                 <p className="text-sm text-muted-foreground">
                   Click the upload icon to change your profile picture
                 </p>
@@ -269,7 +272,7 @@ export default function ProfilePage() {
         {/* Watched Movies Section */}
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between px-10">
               <div>
                 <CardTitle className="text-xl">Watched Movies</CardTitle>
               </div>
@@ -279,11 +282,7 @@ export default function ProfilePage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {watchedMovies.map((movie) => (
-                <MovieCard key={movie.id} movie={movie} />
-              ))}
-            </div>
+            <MovieCatalogue movies={watchedMovies} />
           </CardContent>
         </Card>
       </div>
