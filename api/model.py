@@ -65,8 +65,8 @@ def recommend_movies():
     # Recommend movies the similar user has rated that the current user hasn't seen
     recommendations = [
         (movie, rating)
-        for movie, rating in similar_user_ratings.items()
-        if movie not in user_ratings
+        for movie, rating in similar_user_ratings.items() 
+        if rating >= 4 and movie not in user_ratings  # Only recommend highly rated movies
     ]
     # Sort by the similar user's rating, highest first
     recommendations.sort(key=lambda x: x[1], reverse=True)

@@ -37,7 +37,6 @@ export default function LobbyPage() {
 
   // When activated becomes true, push to results page
   useEffect(() => {
-    console.log("Activated state changed:", activated);
     if (activated) {
       toast.success("Session started! Redirecting to results...");
       router.push(`/results/${groupCode}`);
