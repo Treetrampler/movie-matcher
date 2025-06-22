@@ -29,6 +29,8 @@ export default function Onboarding() {
   // State for tracking the current onboarding step
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [agreed, setAgreed] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
   const router = useRouter();
 
   // State for storing user input (name, age, activated)
@@ -47,6 +49,10 @@ export default function Onboarding() {
 
   // Step 1: Profile form submit
   const onProfileSubmit = (data: ProfileFormValues) => {
+    if (!agreed) {
+      toast.error("You must agree to the privacy policy to continue.");
+      return;
+    }
     setUserInfo({ name: data.username, age: data.age });
     setCurrentStep(2);
   };
@@ -143,12 +149,53 @@ export default function Onboarding() {
                   <p className="text-sm text-red-500">{errors.age.message}</p>
                 )}
               </div>
+              {/* Expandable Privacy Policy */}
+              <div className="mb-2">
+                <button
+                  type="button"
+                  className="text-sm text-orange-500 underline"
+                  onClick={() => setShowPrivacy((prev) => !prev)}
+                  aria-expanded={showPrivacy}
+                  aria-controls="privacy-policy"
+                >
+                  {showPrivacy ? "Hide Privacy Policy" : "Show Privacy Policy"}
+                </button>
+                {showPrivacy && (
+                  <div
+                    id="privacy-policy"
+                    className="mt-2 max-h-40 overflow-y-auto rounded border bg-gray-50 p-3 text-sm text-gray-700"
+                  >
+                    <strong>Privacy Policy</strong>
+                    <p>
+                      We value your privacy. Your personal information (such as
+                      your name, age, and movie ratings) will only be used to
+                      personalize your experience on MovieMatch. We do not share
+                      your data with third parties. For more details, please see
+                      our full privacy policy on our website.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="agree"
+                  checked={agreed}
+                  onChange={(e) => setAgreed(e.target.checked)}
+                  className="h-4 w-4"
+                  required
+                />
+                <Label htmlFor="agree" className="text-sm">
+                  I have read and agree to the privacy policy
+                </Label>
+              </div>
               <Button
                 type="submit"
                 className="w-full bg-orange-400 hover:bg-orange-300"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !agreed}
               >
-                Continue
+                Agree and Continue
                 <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
             </form>
