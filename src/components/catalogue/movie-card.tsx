@@ -60,7 +60,6 @@ export function MovieCard({ movie }: MovieCardProps) {
       const userId = session.user.id;
 
       // Fetch the user's rating for this movie
-
       const { data, error } = await supabase
         .from("user-movie-data")
         .select("rating")
@@ -91,6 +90,9 @@ export function MovieCard({ movie }: MovieCardProps) {
       <Card
         className="shimmer-card group cursor-pointer overflow-hidden transition-shadow duration-300 hover:shadow-md"
         onClick={handleCardClick}
+        role="region"
+        aria-label={`Movie card for ${movie.title}`}
+        tabIndex={0}
       >
         <div className="relative aspect-[3/4] w-full overflow-hidden">
           <Image
@@ -103,9 +105,18 @@ export function MovieCard({ movie }: MovieCardProps) {
           <div className="shimmer-overlay absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
         </div>
         <CardContent className="px-4">
-          <h3 className="mb-2 line-clamp-1 text-lg font-bold">{movie.title}</h3>
+          <h3
+            className="mb-2 line-clamp-1 text-lg font-bold"
+            id={`movie-title-${movie.id}`}
+          >
+            {movie.title}
+          </h3>
 
-          <div className="rating-section mb-3 flex items-center">
+          <div
+            className="rating-section mb-3 flex items-center"
+            role="group"
+            aria-label={`Rate ${movie.title}`}
+          >
             {[1, 2, 3, 4, 5].map((star) => (
               <button
                 key={star}
@@ -115,6 +126,9 @@ export function MovieCard({ movie }: MovieCardProps) {
                 }}
                 onMouseEnter={() => setHoverRating(star)}
                 onMouseLeave={() => setHoverRating(null)}
+                aria-label={`Set rating to ${star} for ${movie.title}`}
+                aria-pressed={userRating === star}
+                tabIndex={0}
               >
                 <Star
                   className={`h-5 w-5 ${
@@ -127,17 +141,18 @@ export function MovieCard({ movie }: MovieCardProps) {
                       ? "fill-grey-800 text-orange-400"
                       : "text-gray-300"
                   }`}
+                  aria-hidden="true"
                 />
               </button>
             ))}
-            <span className="ml-2 text-sm text-gray-600">
+            <span className="ml-2 text-sm text-gray-600" aria-live="polite">
               {userRating
                 ? `Your rating: ${userRating}`
                 : movie.rating.toFixed(1)}
             </span>
           </div>
 
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-1" aria-label="Genres">
             {movie.genres.map((genre) => (
               <Badge key={genre} variant="outline" className="text-xs">
                 {genre}

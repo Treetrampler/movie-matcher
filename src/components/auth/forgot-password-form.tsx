@@ -55,31 +55,46 @@ export function ForgotPasswordForm({
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div
+      className={cn("flex flex-col gap-6", className)}
+      {...props}
+      role="main"
+      aria-label="Forgot password form"
+    >
       {success ? (
-        <Card>
+        <Card role="alert" aria-live="polite" aria-atomic="true">
           <CardHeader>
-            <CardTitle className="text-2xl">Check Your Email</CardTitle>
+            <CardTitle className="text-2xl" id="reset-success-title">
+              Check Your Email
+            </CardTitle>
             <CardDescription>Password reset instructions sent</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground">
+            <p
+              className="text-sm text-muted-foreground"
+              aria-describedby="reset-success-title"
+            >
               If you registered using your email and password, you will receive
               a password reset email.
             </p>
           </CardContent>
         </Card>
       ) : (
-        <Card>
+        <Card role="form" aria-labelledby="reset-title">
           <CardHeader>
-            <CardTitle className="text-2xl">Reset Your Password</CardTitle>
+            <CardTitle className="text-2xl" id="reset-title">
+              Reset Your Password
+            </CardTitle>
             <CardDescription>
               Type in your email and we&apos;ll send you a link to reset your
               password
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit(handleForgotPassword)}>
+            <form
+              onSubmit={handleSubmit(handleForgotPassword)}
+              aria-describedby={error ? "reset-error" : undefined}
+            >
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
@@ -88,18 +103,33 @@ export function ForgotPasswordForm({
                     type="email"
                     placeholder="m@example.com"
                     {...register("email")}
+                    aria-invalid={!!errors.email}
+                    aria-describedby={errors.email ? "email-error" : undefined}
                   />
                   {errors.email && (
-                    <p className="text-sm text-red-500">
+                    <p
+                      className="text-sm text-red-500"
+                      id="email-error"
+                      role="alert"
+                    >
                       {errors.email.message}
                     </p>
                   )}
                 </div>
-                {error && <p className="text-sm text-red-500">{error}</p>}
+                {error && (
+                  <p
+                    className="text-sm text-red-500"
+                    id="reset-error"
+                    role="alert"
+                  >
+                    {error}
+                  </p>
+                )}
                 <Button
                   type="submit"
                   className="w-full bg-orange-400 hover:bg-orange-300"
                   disabled={isSubmitting}
+                  aria-disabled={isSubmitting}
                 >
                   {isSubmitting ? "Sending..." : "Send reset email"}
                 </Button>

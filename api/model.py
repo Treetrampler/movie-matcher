@@ -2,6 +2,9 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS  # <-- Add this import
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
+import os
+import time
+
 
 app = Flask(__name__)
 CORS(app)
@@ -71,6 +74,8 @@ def recommend_movies():
     # Sort by the similar user's rating, highest first
     recommendations.sort(key=lambda x: x[1], reverse=True)
 
+    log_action(user_ids, recommendations, best_match, best_similarity) # Log the action
+
     return jsonify({
         'recommendations': [movie for movie, _ in recommendations],
         'similar_user_id': best_match, #for extra info if needed
@@ -92,3 +97,14 @@ def combine_user_ratings(user_ratings):
     # Average the ratings
     averaged_ratings = {movie: np.mean(ratings) for movie, ratings in combined_ratings.items()}
     return averaged_ratings
+
+def log_action(user_ids, recommendations, similar_user_id, similarity):
+    current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    log_path = os.path.join(os.path.dirname(__file__), 'recommendation_log.txt')
+    with open(log_path, 'a') as f:
+        f.write(f"Timestamp: {current_time}\n")
+        f.write(f"User IDs: {user_ids}\n")
+        f.write(f"Recommendations: {recommendations}\n")
+        f.write(f"Similar User ID: {similar_user_id}\n")
+        f.write(f"Similarity: {similarity}\n")
+        f.write("\n")

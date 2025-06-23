@@ -51,16 +51,27 @@ export function UpdatePasswordForm({
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div
+      className={cn("flex flex-col gap-6", className)}
+      {...props}
+      role="main"
+      aria-label="Update password form"
+    >
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Reset Your Password</CardTitle>
+          <CardTitle className="text-2xl" id="update-password-title">
+            Reset Your Password
+          </CardTitle>
           <CardDescription>
             Please enter your new password below.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            aria-labelledby="update-password-title"
+            aria-describedby={error ? "update-password-error" : undefined}
+          >
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="password">New password</Label>
@@ -68,18 +79,35 @@ export function UpdatePasswordForm({
                   id="password"
                   placeholder="New password"
                   {...register("password")}
+                  aria-invalid={!!errors.password}
+                  aria-describedby={
+                    errors.password ? "password-error" : undefined
+                  }
                 />
                 {errors.password && (
-                  <p className="text-sm text-red-500">
+                  <p
+                    className="text-sm text-red-500"
+                    id="password-error"
+                    role="alert"
+                  >
                     {errors.password.message}
                   </p>
                 )}
               </div>
-              {error && <p className="text-sm text-red-500">{error}</p>}
+              {error && (
+                <p
+                  className="text-sm text-red-500"
+                  id="update-password-error"
+                  role="alert"
+                >
+                  {error}
+                </p>
+              )}
               <Button
                 type="submit"
                 className="w-full bg-orange-400 hover:bg-orange-300"
                 disabled={isSubmitting}
+                aria-disabled={isSubmitting}
               >
                 {isSubmitting ? "Saving..." : "Save new password"}
               </Button>

@@ -47,14 +47,23 @@ export function MovieModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-h-[90vh] w-[80vw] max-w-none overflow-y-auto">
+      <DialogContent
+        className="max-h-[90vh] w-[80vw] max-w-none overflow-y-auto"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="movie-modal-title"
+        aria-describedby="movie-modal-desc"
+      >
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">
+          <DialogTitle className="text-2xl font-bold" id="movie-modal-title">
             {movie.title}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div
+          className="grid grid-cols-1 gap-6 md:grid-cols-2"
+          id="movie-modal-desc"
+        >
           {/* Movie Poster */}
           <div className="relative mx-auto aspect-[3/4] w-full max-w-md">
             <Image
@@ -69,7 +78,11 @@ export function MovieModal({
           <div className="space-y-6 py-6">
             {/* Rating Section */}
             <div>
-              <div className="mb-2 flex items-center">
+              <div
+                className="mb-2 flex items-center"
+                role="group"
+                aria-label={`Rate ${movie.title}`}
+              >
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
                     key={star}
@@ -79,6 +92,9 @@ export function MovieModal({
                     }}
                     onMouseEnter={() => setHoverRating(star)}
                     onMouseLeave={() => setHoverRating(null)}
+                    aria-label={`Set rating to ${star} for ${movie.title}`}
+                    aria-pressed={userRating === star}
+                    tabIndex={0}
                   >
                     <Star
                       className={`h-6 w-6 ${
@@ -90,10 +106,11 @@ export function MovieModal({
                           ? "fill-black text-orange-400"
                           : "text-gray-300"
                       }`}
+                      aria-hidden="true"
                     />
                   </button>
                 ))}
-                <span className="ml-3 text-sm text-gray-600">
+                <span className="ml-3 text-sm text-gray-600" aria-live="polite">
                   {userRating
                     ? `Your rating: ${userRating}`
                     : `${roundedRating.toFixed(1)}`}
@@ -104,7 +121,7 @@ export function MovieModal({
             {/* Genres */}
             <div>
               <h3 className="mb-2 text-lg font-semibold">Genres</h3>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2" aria-label="Genres">
                 {movie.genres.map((genre) => (
                   <Badge
                     key={genre}
@@ -134,9 +151,10 @@ export function MovieModal({
                   size="sm"
                   className="flex items-center gap-2"
                   onClick={() => window.open(movie.watchLink, "_blank")}
+                  aria-label={`Watch ${movie.title} now (opens in a new tab)`}
                 >
                   Watch Now
-                  <ExternalLink className="h-4 w-4" />
+                  <ExternalLink className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </div>
             </div>
