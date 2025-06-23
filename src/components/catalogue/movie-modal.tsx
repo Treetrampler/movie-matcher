@@ -33,7 +33,8 @@ export function MovieModal({
 }: MovieModalProps) {
   const [hoverRating, setHoverRating] = useState<number | null>(null);
 
-  if (!movie) return null; // Return null if no movie is provided
+  // Only render the modal if movie exists and isOpen is true
+  if (!movie || !isOpen) return null;
 
   const displayRating = userRating !== null ? userRating : movie.rating; // Use user rating if available, otherwise use movie rating
   const roundedRating = Math.round(displayRating * 2) / 2;
@@ -55,7 +56,7 @@ export function MovieModal({
         aria-describedby="movie-modal-desc"
       >
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold" id="movie-modal-title">
+          <DialogTitle className="text-2xl font-bold">
             {movie.title}
           </DialogTitle>
         </DialogHeader>
