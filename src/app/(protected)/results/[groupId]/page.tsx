@@ -4,7 +4,6 @@ import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 import { MovieCard } from "@/components/catalogue/movie-card";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import moviesData from "@/data/movies.json"; // This should be an array of movie objects
 import {
   useFetchAllUserRatings,
@@ -134,7 +133,7 @@ export default function ResultsPage() {
   if (loading) {
     return (
       <div
-        className="flex min-h-screen flex-col items-center justify-center bg-neutral-950"
+        className="flex min-h-screen w-full flex-col items-center justify-center overflow-x-hidden bg-neutral-950"
         role="main"
         aria-label="Loading results"
       >
@@ -158,83 +157,111 @@ export default function ResultsPage() {
 
   return (
     <div
-      className="container mx-auto h-screen max-w-[95%] px-4 py-8"
+      className="min-h-screen w-full overflow-x-hidden bg-background px-0 py-8"
       role="main"
       aria-label="Group Results Page"
     >
-      {/* Podium Section */}
-      <div
-        className="mb-16 flex max-h-[95vh] flex-col items-end justify-center gap-4 md:flex-row md:gap-8"
-        aria-label="Top 3 Movies Podium"
-        role="region"
-      >
-        {podiumData.map((item) => (
-          <div
-            key={item.place}
-            className={`${item.order} flex flex-col items-center`}
-            aria-label={`${item.place} place`}
-            role="group"
-          >
-            <div className="mb-2">{item.icon}</div>
-            <div className="w-[250px]">
-              {moviesToDisplay[item.index] && (
-                <MovieCard movie={moviesToDisplay[item.index]} />
-              )}
-            </div>
-            <div
-              className={`mt-2 flex ${item.height} ${item.width} items-center justify-center rounded-t-lg bg-orange-400`}
-            >
-              <span className={`${item.textSize} font-bold text-black`}>
-                {item.place}
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Runner Ups Section */}
-      <div>
-        <h2 className="mb-6 text-2xl font-bold" id="runner-ups-title">
-          Runner Ups
-        </h2>
-
-        {/* Desktop View: Grid with 2 rows of 4 */}
+      <div className="mx-auto w-full max-w-2xl px-2 md:max-w-7xl md:px-4">
+        <h1 className="mb-8 text-center text-3xl font-bold">
+          Top Movie Recommendations
+        </h1>
+        {/* Mobile: vertical list */}
         <div
-          className="mb-8 hidden grid-cols-2 gap-6 md:grid lg:grid-cols-4"
+          className="flex flex-col gap-6 md:hidden"
           role="list"
-          aria-labelledby="runner-ups-title"
+          aria-label="Recommended Movies"
         >
-          {moviesToDisplay.slice(3, 11).map((movie) => (
-            <div key={movie.id} role="listitem">
-              <MovieCard movie={movie} />
+          {/* Podium Movies */}
+          {podiumData.map((item) =>
+            moviesToDisplay[item.index] ? (
+              <div
+                key={item.place}
+                className="flex flex-col items-center border-b pb-6"
+                role="listitem"
+                aria-label={`${item.place} place`}
+              >
+                <div className="mb-2">{item.icon}</div>
+                <div className="w-full">
+                  <MovieCard movie={moviesToDisplay[item.index]} />
+                </div>
+                <div
+                  className={`mt-2 flex ${item.height} w-full items-center justify-center rounded-t-lg bg-orange-400`}
+                >
+                  <span className={`${item.textSize} font-bold text-black`}>
+                    {item.place}
+                  </span>
+                </div>
+              </div>
+            ) : null,
+          )}
+
+          {/* Runner Ups */}
+          {moviesToDisplay.slice(3, 11).map((movie, idx) => (
+            <div
+              key={movie.id}
+              className="flex flex-col items-center border-b pb-6"
+              role="listitem"
+              aria-label={`Runner up ${idx + 4}`}
+            >
+              <div className="w-full">
+                <MovieCard movie={movie} />
+              </div>
+              <div className="mt-2 flex w-full items-center justify-center">
+                <span className="text-lg font-semibold text-gray-400">
+                  Runner Up
+                </span>
+              </div>
             </div>
           ))}
         </div>
-
-        {/* Mobile View: Horizontal Scroll */}
-        <div
-          className="mb-8 md:hidden"
-          role="region"
-          aria-label="Runner Ups Scrollable List"
-        >
-          <ScrollArea className="w-full whitespace-nowrap">
+        {/* Desktop: podium row and runner up grid */}
+        <div className="hidden md:block">
+          {/* Podium Section */}
+          <div
+            className="mb-16 flex max-h-[95vh] w-full flex-col items-end justify-center gap-4 md:flex-row md:gap-8"
+            aria-label="Top 3 Movies Podium"
+            role="region"
+          >
+            {podiumData.map((item) => (
+              <div
+                key={item.place}
+                className={`${item.order} flex w-full max-w-xs flex-col items-center sm:max-w-sm md:max-w-[250px]`}
+                aria-label={`${item.place} place`}
+                role="group"
+              >
+                <div className="mb-2">{item.icon}</div>
+                <div className="w-full">
+                  {moviesToDisplay[item.index] && (
+                    <MovieCard movie={moviesToDisplay[item.index]} />
+                  )}
+                </div>
+                <div
+                  className={`mt-2 flex ${item.height} w-full items-center justify-center rounded-t-lg bg-orange-400`}
+                >
+                  <span className={`${item.textSize} font-bold text-black`}>
+                    {item.place}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* Runner Ups Section */}
+          <div>
+            <h2 className="mb-6 text-2xl font-bold" id="runner-ups-title">
+              Runner Ups
+            </h2>
             <div
-              className="flex gap-4 pb-4"
+              className="mb-8 grid grid-cols-2 gap-6 lg:grid-cols-4"
               role="list"
               aria-labelledby="runner-ups-title"
             >
               {moviesToDisplay.slice(3, 11).map((movie) => (
-                <div
-                  key={movie.id}
-                  className="w-[200px] flex-shrink-0"
-                  role="listitem"
-                >
+                <div key={movie.id} role="listitem">
                   <MovieCard movie={movie} />
                 </div>
               ))}
             </div>
-            <ScrollBar orientation="horizontal" />
-          </ScrollArea>
+          </div>
         </div>
       </div>
     </div>

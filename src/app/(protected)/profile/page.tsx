@@ -242,10 +242,14 @@ export default function ProfilePage() {
   }, []);
 
   return (
-    <div className="min-h-screen py-8" role="main" aria-label="Profile page">
-      <div className="mx-auto max-w-7xl space-y-8 px-4">
+    <div
+      className="min-h-screen w-full overflow-x-hidden bg-background py-4 md:py-8"
+      role="main"
+      aria-label="Profile page"
+    >
+      <div className="mx-auto w-full max-w-7xl space-y-8 px-0 sm:px-2 md:px-4">
         {/* Profile Header */}
-        <Card>
+        <Card className="w-full max-w-full overflow-x-auto">
           <CardHeader>
             <CardTitle className="text-2xl" id="profile-title">
               My Profile
@@ -256,7 +260,7 @@ export default function ProfilePage() {
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Profile Picture Section */}
-            <div className="flex items-center space-x-6">
+            <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:gap-6">
               <div className="relative">
                 <Avatar className="h-24 w-24">
                   <AvatarImage
@@ -290,7 +294,7 @@ export default function ProfilePage() {
                   </div>
                 )}
               </div>
-              <div className="space-y-1">
+              <div className="space-y-1 text-center sm:text-left">
                 <h3 className="text-lg font-semibold">
                   {profileData.username}
                 </h3>
@@ -307,13 +311,13 @@ export default function ProfilePage() {
               {/* Username */}
               <div className="space-y-2">
                 <Label htmlFor="username">Username</Label>
-                <div className="flex items-center space-x-2">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                   {isEditingUsername ? (
                     <form
                       onSubmit={handleSubmit((data) =>
                         handleUpdateUsername(data.username),
                       )}
-                      className="flex w-full items-center space-x-2"
+                      className="flex w-full flex-col gap-2 sm:flex-row sm:items-center"
                       role="form"
                       aria-labelledby="username-label"
                     >
@@ -327,26 +331,28 @@ export default function ProfilePage() {
                           errors.username ? "username-error" : undefined
                         }
                       />
-                      <Button
-                        size="sm"
-                        type="submit"
-                        disabled={isSubmitting}
-                        aria-label="Save username"
-                      >
-                        <Save className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        type="button"
-                        onClick={() => {
-                          setIsEditingUsername(false);
-                          reset({ username: profileData.username, age: 18 });
-                        }}
-                        aria-label="Cancel username edit"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          type="submit"
+                          disabled={isSubmitting}
+                          aria-label="Save username"
+                        >
+                          <Save className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          type="button"
+                          onClick={() => {
+                            setIsEditingUsername(false);
+                            reset({ username: profileData.username, age: 18 });
+                          }}
+                          aria-label="Cancel username edit"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
                       {errors.username && (
                         <p
                           className="text-sm text-red-500"
@@ -358,7 +364,7 @@ export default function ProfilePage() {
                       )}
                     </form>
                   ) : (
-                    <>
+                    <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center">
                       <Input
                         value={profileData.username}
                         disabled
@@ -373,7 +379,7 @@ export default function ProfilePage() {
                       >
                         <Edit2 className="h-4 w-4" />
                       </Button>
-                    </>
+                    </div>
                   )}
                 </div>
               </div>
@@ -392,9 +398,9 @@ export default function ProfilePage() {
         </Card>
 
         {/* Watched Movies Section */}
-        <Card>
+        <Card className="w-full max-w-full overflow-x-auto">
           <CardHeader>
-            <div className="flex items-center justify-between px-10">
+            <div className="flex flex-col items-center justify-between gap-2 px-2 sm:flex-row sm:px-10">
               <div>
                 <CardTitle className="text-xl" id="watched-movies-title">
                   Watched Movies

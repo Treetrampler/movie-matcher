@@ -100,13 +100,16 @@ export default function Join() {
 
   return (
     <div
-      className="flex min-h-screen items-center justify-center bg-background p-4"
+      className="flex min-h-screen w-full items-center justify-center overflow-x-hidden bg-background p-2"
       role="main"
       aria-label="Join group page"
     >
-      <div className="w-full max-w-md space-y-8">
+      <div className="w-full max-w-xs space-y-8 sm:max-w-sm md:max-w-md">
         <div className="space-y-2 text-center">
-          <h1 className="mb-6 text-6xl font-semibold" id="join-title">
+          <h1
+            className="mb-6 text-4xl font-semibold sm:text-5xl md:text-6xl"
+            id="join-title"
+          >
             Enter Group Code
           </h1>
           <p className="text-muted-foreground" id="join-desc">
@@ -132,7 +135,7 @@ export default function Join() {
                 <InputOTPSlot
                   key={index}
                   index={index}
-                  className="h-14 w-16 text-2xl"
+                  className="h-14 w-10 text-2xl sm:w-12 md:w-16"
                   aria-label={`Digit ${index + 1}`}
                 />
               ))}
