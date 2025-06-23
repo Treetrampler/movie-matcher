@@ -13,7 +13,7 @@ export default function LandingPage() {
       <header className="fixed z-10 w-full bg-black/80 px-8 py-6 backdrop-blur-sm">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Film className="h-8 w-8 text-orange-500" />{" "}
+            <Film className="h-8 w-8 text-orange-500" aria-hidden="true" />
             {/* Logo plus name of app */}
             <span className="text-xl font-bold">Aperture</span>
           </div>
@@ -42,11 +42,18 @@ export default function LandingPage() {
       </header>
 
       {/* Main content */}
-      <main className="flex min-h-screen flex-1 flex-col items-center justify-center bg-[url('/bg2.jpg')] bg-cover bg-center bg-no-repeat px-4 pt-32 pb-20 text-center">
+      <main
+        className="flex min-h-screen flex-1 flex-col items-center justify-center bg-[url('/bg2.jpg')] bg-cover bg-center bg-no-repeat px-4 pt-32 pb-20 text-center"
+        role="main"
+        aria-label="Landing page main content"
+      >
         <div className="mx-auto max-w-6xl space-y-10">
-          <TypedHeading />{" "}
+          <TypedHeading />
           {/* Animated typing heading, abstracted for simplicity and also optimisation as it uses client side rendering */}
-          <p className="mx-auto max-w-2xl text-lg text-gray-400 md:text-xl">
+          <p
+            className="mx-auto max-w-2xl text-lg text-gray-400 md:text-xl"
+            id="landing-desc"
+          >
             No more endless scrolling. Discover movies you'll love based on your
             unique taste profile.
           </p>

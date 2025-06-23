@@ -119,18 +119,24 @@ export function MovieCatalogue({ movies: propMovies }: MovieCatalogueProps) {
   }, []);
 
   return (
-    <div className="container mx-auto max-w-[95%] px-4 py-8">
+    <div
+      className="container mx-auto max-w-[95%] px-4 py-8"
+      role="main"
+      aria-label="Movie catalogue"
+    >
       <div className="mb-8 flex flex-col gap-4 sm:flex-row">
         <div className="relative flex-grow">
           <Search
             className="absolute top-1/2 left-3 -translate-y-1/2 transform text-gray-500"
             size={18}
+            aria-hidden="true"
           />
           <Input
             className="border-gray-300 pl-10 focus:border-black focus:ring-black"
             placeholder="Search movies..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            aria-label="Search movies"
           />
         </div>
         <div className="flex items-center gap-2">
@@ -138,20 +144,27 @@ export function MovieCatalogue({ movies: propMovies }: MovieCatalogueProps) {
             variant="outline"
             onClick={() => setIsFilterModalOpen(true)}
             className="flex items-center gap-2 !border-gray-300"
+            aria-label="Open genre filter modal"
+            aria-haspopup="dialog"
+            aria-expanded={isFilterModalOpen}
           >
-            <SlidersHorizontal size={18} />
+            <SlidersHorizontal size={18} aria-hidden="true" />
             Genres
             {hasGenreFilters && (
               <Badge
                 variant="default"
                 className="ml-1 bg-neutral-950 text-xs text-white"
+                aria-label={`${genreFilters.selectedGenres.length} genres selected`}
               >
                 {genreFilters.selectedGenres.length}
               </Badge>
             )}
           </Button>
           <Select value={sortOption} onValueChange={setSortOption}>
-            <SelectTrigger className="w-[180px] border-gray-300 focus:border-black focus:ring-black">
+            <SelectTrigger
+              className="w-[180px] border-gray-300 focus:border-black focus:ring-black"
+              aria-label="Sort movies"
+            >
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
@@ -165,17 +178,35 @@ export function MovieCatalogue({ movies: propMovies }: MovieCatalogueProps) {
       </div>
 
       {isLoading ? (
-        <div className="py-12 text-center text-gray-500">Loading movies...</div>
+        <div
+          className="py-12 text-center text-gray-500"
+          role="status"
+          aria-live="polite"
+        >
+          Loading movies...
+        </div>
       ) : error ? (
-        <div className="py-12 text-center text-red-500">Error: {error}</div>
+        <div className="py-12 text-center text-red-500" role="alert">
+          Error: {error}
+        </div>
       ) : sortedMovies.length === 0 ? (
-        <div className="py-12 text-center text-gray-500">
+        <div
+          className="py-12 text-center text-gray-500"
+          role="status"
+          aria-live="polite"
+        >
           No movies found matching your search.
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <div
+          className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+          role="list"
+          aria-label="Movie list"
+        >
           {sortedMovies.slice(0, visibleCount).map((movie) => (
-            <MovieCard key={movie.id} movie={movie} />
+            <div role="listitem" key={movie.id}>
+              <MovieCard movie={movie} />
+            </div>
           ))}
         </div>
       )}

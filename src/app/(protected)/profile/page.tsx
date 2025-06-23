@@ -242,13 +242,15 @@ export default function ProfilePage() {
   }, []);
 
   return (
-    <div className="min-h-screen py-8">
+    <div className="min-h-screen py-8" role="main" aria-label="Profile page">
       <div className="mx-auto max-w-7xl space-y-8 px-4">
         {/* Profile Header */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">My Profile</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-2xl" id="profile-title">
+              My Profile
+            </CardTitle>
+            <CardDescription id="profile-desc">
               Manage your account settings and movie preferences
             </CardDescription>
           </CardHeader>
@@ -279,6 +281,7 @@ export default function ProfilePage() {
                     className="hidden"
                     onChange={handleProfilePicUpload}
                     disabled={isUploading}
+                    aria-label="Upload profile picture"
                   />
                 </label>
                 {isUploading && (
@@ -311,14 +314,25 @@ export default function ProfilePage() {
                         handleUpdateUsername(data.username),
                       )}
                       className="flex w-full items-center space-x-2"
+                      role="form"
+                      aria-labelledby="username-label"
                     >
                       <Input
                         {...register("username")}
                         className="flex-1"
                         autoFocus
                         disabled={isSubmitting}
+                        aria-invalid={!!errors.username}
+                        aria-describedby={
+                          errors.username ? "username-error" : undefined
+                        }
                       />
-                      <Button size="sm" type="submit" disabled={isSubmitting}>
+                      <Button
+                        size="sm"
+                        type="submit"
+                        disabled={isSubmitting}
+                        aria-label="Save username"
+                      >
                         <Save className="h-4 w-4" />
                       </Button>
                       <Button
@@ -329,11 +343,16 @@ export default function ProfilePage() {
                           setIsEditingUsername(false);
                           reset({ username: profileData.username, age: 18 });
                         }}
+                        aria-label="Cancel username edit"
                       >
                         <X className="h-4 w-4" />
                       </Button>
                       {errors.username && (
-                        <p className="text-sm text-red-500">
+                        <p
+                          className="text-sm text-red-500"
+                          id="username-error"
+                          role="alert"
+                        >
                           {errors.username.message}
                         </p>
                       )}
@@ -344,11 +363,13 @@ export default function ProfilePage() {
                         value={profileData.username}
                         disabled
                         className="flex-1"
+                        aria-label="Current username"
                       />
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={handleUsernameEdit}
+                        aria-label="Edit username"
                       >
                         <Edit2 className="h-4 w-4" />
                       </Button>
@@ -360,7 +381,11 @@ export default function ProfilePage() {
               {/* Email */}
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input value={profileData.email} disabled />
+                <Input
+                  value={profileData.email}
+                  disabled
+                  aria-label="Email address"
+                />
               </div>
             </div>
           </CardContent>
@@ -371,15 +396,27 @@ export default function ProfilePage() {
           <CardHeader>
             <div className="flex items-center justify-between px-10">
               <div>
-                <CardTitle className="text-xl">Watched Movies</CardTitle>
+                <CardTitle className="text-xl" id="watched-movies-title">
+                  Watched Movies
+                </CardTitle>
               </div>
-              <Badge variant="secondary" className="text-sm">
+              <Badge
+                variant="secondary"
+                className="text-sm"
+                aria-label={`You have watched ${watchedMovies.length} movies`}
+              >
                 {watchedMovies.length} movies
               </Badge>
             </div>
           </CardHeader>
           <CardContent>
-            <MovieCatalogue movies={watchedMovies} />
+            <div
+              role="region"
+              aria-labelledby="watched-movies-title"
+              aria-label="Watched Movies List"
+            >
+              <MovieCatalogue movies={watchedMovies} />
+            </div>
           </CardContent>
         </Card>
       </div>

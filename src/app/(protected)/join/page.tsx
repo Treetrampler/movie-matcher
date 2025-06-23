@@ -99,11 +99,17 @@ export default function Join() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+    <div
+      className="flex min-h-screen items-center justify-center bg-background p-4"
+      role="main"
+      aria-label="Join group page"
+    >
       <div className="w-full max-w-md space-y-8">
         <div className="space-y-2 text-center">
-          <h1 className="mb-6 text-6xl font-semibold">Enter Group Code</h1>
-          <p className="text-muted-foreground">
+          <h1 className="mb-6 text-6xl font-semibold" id="join-title">
+            Enter Group Code
+          </h1>
+          <p className="text-muted-foreground" id="join-desc">
             Enter the 6-digit code provided by the group creator
           </p>
         </div>
@@ -114,15 +120,20 @@ export default function Join() {
             value={groupId}
             onChange={setGroupId}
             className="space-x-2"
+            aria-label="Group code"
+            aria-describedby="join-desc"
+            aria-labelledby="join-title"
+            inputMode="numeric"
+            pattern="[0-9]*"
           >
             <InputOTPGroup>
-              {" "}
               {/* map 6 digit array to the input boxes for scalability */}
               {[...Array.from({ length: 6 })].map((_, index) => (
                 <InputOTPSlot
                   key={index}
                   index={index}
                   className="h-14 w-16 text-2xl"
+                  aria-label={`Digit ${index + 1}`}
                 />
               ))}
             </InputOTPGroup>
@@ -134,6 +145,8 @@ export default function Join() {
             className="h-12 w-full bg-orange-400 text-xl hover:bg-orange-300"
             onClick={handleJoinGroup}
             disabled={groupId.length !== 6 || isSubmitting}
+            aria-disabled={groupId.length !== 6 || isSubmitting}
+            aria-label="Join group"
           >
             {isSubmitting ? "Joining..." : "Join Group"}
           </Button>

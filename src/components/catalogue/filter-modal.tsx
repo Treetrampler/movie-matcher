@@ -80,7 +80,6 @@ export function FilterModal({
   };
 
   // Clear all selected genres
-
   const handleClearFilters = () => {
     setSelectedGenres([]);
   };
@@ -89,14 +88,20 @@ export function FilterModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-h-[80vh] max-w-2xl overflow-y-auto">
+      <DialogContent
+        className="max-h-[80vh] max-w-2xl overflow-y-auto"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="filter-modal-title"
+        aria-describedby="filter-modal-desc"
+      >
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">
+          <DialogTitle className="text-2xl font-bold" id="filter-modal-title">
             Filter by Genre
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-6" id="filter-modal-desc">
           {/* Genre Section */}
           <div>
             <h3 className="mb-4 text-lg font-semibold">Select Genres</h3>
@@ -108,8 +113,11 @@ export function FilterModal({
                     checked={selectedGenres.includes(genre)}
                     onCheckedChange={() => handleGenreToggle(genre)}
                     className="border-gray-300"
+                    aria-checked={selectedGenres.includes(genre)}
+                    aria-labelledby={`label-${genre}`}
                   />
                   <label
+                    id={`label-${genre}`}
                     htmlFor={genre}
                     className="cursor-pointer text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
@@ -136,6 +144,7 @@ export function FilterModal({
                       <button
                         onClick={() => handleGenreToggle(genre)}
                         className="ml-1 rounded-full p-0.5 hover:bg-neutral-700"
+                        aria-label={`Remove ${genre}`}
                       >
                         <X size={12} />
                       </button>
@@ -154,17 +163,24 @@ export function FilterModal({
             onClick={handleClearFilters}
             disabled={!hasActiveFilters}
             className="flex items-center gap-2"
+            aria-disabled={!hasActiveFilters}
+            aria-label="Clear selected genres"
           >
             Clear Genres
           </Button>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={onClose}>
+            <Button
+              variant="outline"
+              onClick={onClose}
+              aria-label="Cancel filter modal"
+            >
               Cancel
             </Button>
             <Button
               variant="outline"
               onClick={handleApplyFilters}
               className="bg-black text-white"
+              aria-label="Apply selected filters"
             >
               Apply Filters
             </Button>
