@@ -59,15 +59,18 @@ export default function ResultsPage() {
   const fetchRecommendations = async () => {
     // fetch recommendations from the backend
     try {
-      const res = await fetch("http://localhost:5000/api/recommend", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_id: users.map((user) => user.id),
-          user_ratings: userRatings,
-          all_user_ratings: allUserRatings,
-        }),
-      });
+      const res = await fetch(
+        "https://movie-matcher-black.vercel.app/api/recommend",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: users.map((user) => user.id),
+            user_ratings: userRatings,
+            all_user_ratings: allUserRatings,
+          }),
+        },
+      );
       const data = await res.json();
       setRecommendation_id(data.recommendations || []);
     } catch (err) {
