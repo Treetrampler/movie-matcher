@@ -72,3 +72,15 @@ Recommendations: [('1562', 4), ('12444', 4)]
 Similar User ID: 4d291f84-ff6e-441d-951f-1b8e95640d5b
 Similarity: 1.0
 
+Timestamp: 2025-06-23 18:58:36
+User IDs: ['050a5669-f4e7-48de-917b-b97cea84f9a1']
+Recommendations: [('1562', 4), ('12444', 4)]
+Similar User ID: 4d291f84-ff6e-441d-951f-1b8e95640d5b
+Similarity: 1.0
+
+Timestamp: 2025-06-23 19:00:55
+User IDs: ['050a5669-f4e7-48de-917b-b97cea84f9a1']
+Recommendations: [('9487', 5), ('447332', 5), ('520763', 5), ('762441', 5), ('950387', 5), ('1013850', 5), ('453', 4), ('851644', 4)]
+Similar User ID: 31566577-3cff-4e5f-aaa7-b6ce42353225
+Similarity: 0.9968014539947918
+
