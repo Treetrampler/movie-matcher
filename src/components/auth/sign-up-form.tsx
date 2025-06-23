@@ -65,14 +65,25 @@ export function SignUpForm({
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div
+      className={cn("flex flex-col gap-6", className)}
+      {...props}
+      role="main"
+      aria-label="Sign up form"
+    >
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Sign up</CardTitle>
+          <CardTitle className="text-2xl" id="signup-title">
+            Sign up
+          </CardTitle>
           <CardDescription>Create a new account</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(handleSignUp)}>
+          <form
+            onSubmit={handleSubmit(handleSignUp)}
+            aria-labelledby="signup-title"
+            aria-describedby={error ? "signup-error" : undefined}
+          >
             <div className="flex flex-col gap-6">
               {/* Email Field */}
               <div className="grid gap-2">
@@ -82,18 +93,37 @@ export function SignUpForm({
                   type="email"
                   placeholder="m@example.com"
                   {...register("email")}
+                  aria-invalid={!!errors.email}
+                  aria-describedby={errors.email ? "email-error" : undefined}
                 />
                 {errors.email && (
-                  <p className="text-sm text-red-500">{errors.email.message}</p>
+                  <p
+                    className="text-sm text-red-500"
+                    id="email-error"
+                    role="alert"
+                  >
+                    {errors.email.message}
+                  </p>
                 )}
               </div>
 
               {/* Password Field */}
               <div className="grid gap-2">
                 <Label htmlFor="password">Password</Label>
-                <PasswordInput id="password" {...register("password")} />
+                <PasswordInput
+                  id="password"
+                  {...register("password")}
+                  aria-invalid={!!errors.password}
+                  aria-describedby={
+                    errors.password ? "password-error" : undefined
+                  }
+                />
                 {errors.password && (
-                  <p className="text-sm text-red-500">
+                  <p
+                    className="text-sm text-red-500"
+                    id="password-error"
+                    role="alert"
+                  >
                     {errors.password.message}
                   </p>
                 )}
@@ -105,21 +135,40 @@ export function SignUpForm({
                 <PasswordInput
                   id="confirmPassword"
                   {...register("confirmPassword")}
+                  aria-invalid={!!errors.confirmPassword}
+                  aria-describedby={
+                    errors.confirmPassword
+                      ? "confirm-password-error"
+                      : undefined
+                  }
                 />
                 {errors.confirmPassword && (
-                  <p className="text-sm text-red-500">
+                  <p
+                    className="text-sm text-red-500"
+                    id="confirm-password-error"
+                    role="alert"
+                  >
                     {errors.confirmPassword.message}
                   </p>
                 )}
               </div>
 
-              {error && <p className="text-sm text-red-500">{error}</p>}
+              {error && (
+                <p
+                  className="text-sm text-red-500"
+                  id="signup-error"
+                  role="alert"
+                >
+                  {error}
+                </p>
+              )}
 
               {/* Submit Button */}
               <Button
                 type="submit"
                 className="w-full bg-orange-400 hover:bg-orange-300"
                 disabled={isSubmitting}
+                aria-disabled={isSubmitting}
               >
                 {isSubmitting ? "Creating an account..." : "Sign up"}
               </Button>
@@ -129,6 +178,7 @@ export function SignUpForm({
               <Link
                 href="/login"
                 className="underline underline-offset-4 hover:text-orange-300"
+                aria-label="Login"
               >
                 Login
               </Link>

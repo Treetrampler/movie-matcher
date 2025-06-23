@@ -60,16 +60,27 @@ export function LoginForm({
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div
+      className={cn("flex flex-col gap-6", className)}
+      {...props}
+      role="main"
+      aria-label="Login form"
+    >
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardTitle className="text-2xl" id="login-title">
+            Login
+          </CardTitle>
           <CardDescription>
             Enter your email below to login to your account
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(handleLogin)}>
+          <form
+            onSubmit={handleSubmit(handleLogin)}
+            aria-labelledby="login-title"
+            aria-describedby={error ? "login-error" : undefined}
+          >
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
@@ -80,9 +91,17 @@ export function LoginForm({
                   autoComplete="email"
                   {...register("email")}
                   disabled={isSubmitting}
+                  aria-invalid={!!errors.email}
+                  aria-describedby={errors.email ? "email-error" : undefined}
                 />
                 {errors.email && (
-                  <p className="text-sm text-red-500">{errors.email.message}</p>
+                  <p
+                    className="text-sm text-red-500"
+                    id="email-error"
+                    role="alert"
+                  >
+                    {errors.email.message}
+                  </p>
                 )}
               </div>
               <div className="grid gap-2">
@@ -100,18 +119,35 @@ export function LoginForm({
                   autoComplete="current-password"
                   {...register("password")}
                   disabled={isSubmitting}
+                  aria-invalid={!!errors.password}
+                  aria-describedby={
+                    errors.password ? "password-error" : undefined
+                  }
                 />
                 {errors.password && (
-                  <p className="text-sm text-red-500">
+                  <p
+                    className="text-sm text-red-500"
+                    id="password-error"
+                    role="alert"
+                  >
                     {errors.password.message}
                   </p>
                 )}
               </div>
-              {error && <p className="text-sm text-red-500">{error}</p>}
+              {error && (
+                <p
+                  className="text-sm text-red-500"
+                  id="login-error"
+                  role="alert"
+                >
+                  {error}
+                </p>
+              )}
               <Button
                 type="submit"
                 className="w-full bg-orange-400 hover:bg-orange-300"
                 disabled={isSubmitting}
+                aria-disabled={isSubmitting}
               >
                 {isSubmitting ? "Logging in..." : "Login"}
               </Button>
