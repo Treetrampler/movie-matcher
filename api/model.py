@@ -57,7 +57,7 @@ def recommend_movies():
         # Compute cosine similarity
         sim = cosine_similarity([u_vec], [o_vec])[0][0]
 
-        if (sim > best_similarity) and (len(other_movies)-len(common_movies)>=5) and (sim>0.5): # Update best match if this user is more similar
+        if (sim > best_similarity) and (len(other_movies)-len(common_movies)>=3) and (sim>0.5): # Update best match if this user is more similar
             best_similarity = sim
             best_match = other_user_id
 
