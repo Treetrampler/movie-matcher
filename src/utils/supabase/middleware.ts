@@ -53,11 +53,15 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith("/update-password") &&
     request.nextUrl.pathname !== "/"
   ) {
-    // no user, potentially respond by redirecting the user to the login page
+    // no user, respond by redirecting the user to the login page
     console.error("Redirecting to login from middleware");
     const url = request.nextUrl.clone();
     url.pathname = "/login";
-    return NextResponse.redirect(url);
+    const redirectResponse = NextResponse.redirect(url);
+    supabaseResponse.cookies.getAll().forEach(({ name, value }) => {
+      redirectResponse.cookies.set(name, value);
+    });
+    return redirectResponse;
   }
 
   // Prevent users with activated=true from accessing /onboarding
@@ -73,7 +77,11 @@ export async function updateSession(request: NextRequest) {
       // Redirect to dashboard or home if already onboarded/activated
       const url = request.nextUrl.clone();
       url.pathname = "/catalogue";
-      return NextResponse.redirect(url);
+      const redirectResponse = NextResponse.redirect(url);
+      supabaseResponse.cookies.getAll().forEach(({ name, value }) => {
+        redirectResponse.cookies.set(name, value);
+      });
+      return redirectResponse;
     }
   }
 
@@ -87,6 +95,7 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith("/error") &&
     !request.nextUrl.pathname.startsWith("/callback") &&
     !request.nextUrl.pathname.startsWith("/onboarding") &&
+    !request.nextUrl.pathname.startsWith("/update-password") &&
     request.nextUrl.pathname !== "/"
   ) {
     const { data, error } = await supabase
@@ -98,7 +107,11 @@ export async function updateSession(request: NextRequest) {
     if (error || (data && !data.activated)) {
       const url = request.nextUrl.clone();
       url.pathname = "/onboarding";
-      return NextResponse.redirect(url);
+      const redirectResponse = NextResponse.redirect(url);
+      supabaseResponse.cookies.getAll().forEach(({ name, value }) => {
+        redirectResponse.cookies.set(name, value);
+      });
+      return redirectResponse;
     }
   }
 
