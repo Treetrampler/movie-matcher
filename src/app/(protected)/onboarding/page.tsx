@@ -91,7 +91,9 @@ export default function Onboarding() {
     }
 
     toast.success("User information saved successfully!");
-    router.push("/catalogue");
+    setTimeout(() => {
+      router.push("/catalogue");
+    }, 0);
     setLoading(false);
   };
 

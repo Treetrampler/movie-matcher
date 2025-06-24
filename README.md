@@ -57,5 +57,5 @@ OTHER NOTES
 
 - I am using a NextJS framework built on react, so my pages are designed in that layout, with function at the top and returning an HTML page. I mostly use state variables, which allow the user to update them.\
 - A lot of the security is abstracted/difficult to find, I promise its there and I can explain how it all works if needed
-- As of 23/6, I have not got my site fully hosted on Vercel, and this may not be possible due to the python API being very annoying to configure.
-- Instead, to run this site locally you need to install Bun (NPM alternative), and NodeJS (and maybe some other stuff but I think its mainly those two). Then type bun i to install all dependencies, and bun run dev to launch a development server. If you have any difficulties I can bring my laptop and run it, but hopefully I will have it hosted by Thursday.
+- To run this site locally you need to install Bun (NPM alternative), and NodeJS (and maybe some other stuff but I think its mainly those two). Then type bun i to install all dependencies, and bun run dev to launch a development server. If you have any difficulties I can bring my laptop and run it, but hopefully I will have it hosted by Thursday.
+- The site is hosted on https://movie-matcher-black.vercel.app/ it uses a pythonanyhwere hosted api, which is a little slow but works. If something breaks, you might want to just use the local host version (might have to reconfigure the fetch link but probably not).

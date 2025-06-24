@@ -48,7 +48,7 @@ export default function AuthCallback() {
           return;
         }
 
-        router.push(data.activated ? "/dashboard" : "/onboarding");
+        router.push(data.activated ? "/catalogue" : "/onboarding");
       } catch (err) {
         console.error(err);
         router.push("/login");
