@@ -59,15 +59,18 @@ export default function ResultsPage() {
   const fetchRecommendations = async () => {
     // fetch recommendations from the backend
     try {
-      const res = await fetch("http://localhost:5000/api/recommend", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_id: users.map((user) => user.id),
-          user_ratings: userRatings,
-          all_user_ratings: allUserRatings,
-        }),
-      });
+      const res = await fetch(
+        "https://hamish123.pythonanywhere.com/api/recommend",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: users.map((user) => user.id),
+            user_ratings: userRatings,
+            all_user_ratings: allUserRatings,
+          }),
+        },
+      );
       const data = await res.json();
       setRecommendation_id(data.recommendations || []);
     } catch (err) {
@@ -196,23 +199,24 @@ export default function ResultsPage() {
           )}
 
           {/* Runner Ups */}
-          {moviesToDisplay.slice(3, 11).map((movie, idx) => (
-            <div
-              key={movie.id}
-              className="flex flex-col items-center border-b pb-6"
-              role="listitem"
-              aria-label={`Runner up ${idx + 4}`}
-            >
-              <div className="w-full">
-                <MovieCard movie={movie} />
+          {moviesToDisplay.length > 3 &&
+            moviesToDisplay.slice(3).map((movie, idx) => (
+              <div
+                key={movie.id}
+                className="flex flex-col items-center border-b pb-6"
+                role="listitem"
+                aria-label={`Runner up ${idx + 4}`}
+              >
+                <div className="w-full">
+                  <MovieCard movie={movie} />
+                </div>
+                <div className="mt-2 flex w-full items-center justify-center">
+                  <span className="text-lg font-semibold text-gray-400">
+                    Runner Up
+                  </span>
+                </div>
               </div>
-              <div className="mt-2 flex w-full items-center justify-center">
-                <span className="text-lg font-semibold text-gray-400">
-                  Runner Up
-                </span>
-              </div>
-            </div>
-          ))}
+            ))}
         </div>
         {/* Desktop: podium row and runner up grid */}
         <div className="hidden md:block">
@@ -222,28 +226,28 @@ export default function ResultsPage() {
             aria-label="Top 3 Movies Podium"
             role="region"
           >
-            {podiumData.map((item) => (
-              <div
-                key={item.place}
-                className={`${item.order} flex w-full max-w-xs flex-col items-center sm:max-w-sm md:max-w-[250px]`}
-                aria-label={`${item.place} place`}
-                role="group"
-              >
-                <div className="mb-2">{item.icon}</div>
-                <div className="w-full">
-                  {moviesToDisplay[item.index] && (
-                    <MovieCard movie={moviesToDisplay[item.index]} />
-                  )}
-                </div>
+            {podiumData.map((item) =>
+              moviesToDisplay[item.index] ? (
                 <div
-                  className={`mt-2 flex ${item.height} w-full items-center justify-center rounded-t-lg bg-orange-400`}
+                  key={item.place}
+                  className={`${item.order} flex w-full max-w-xs flex-col items-center sm:max-w-sm md:max-w-[250px]`}
+                  aria-label={`${item.place} place`}
+                  role="group"
                 >
-                  <span className={`${item.textSize} font-bold text-black`}>
-                    {item.place}
-                  </span>
+                  <div className="mb-2">{item.icon}</div>
+                  <div className="w-full">
+                    <MovieCard movie={moviesToDisplay[item.index]} />
+                  </div>
+                  <div
+                    className={`mt-2 flex ${item.height} w-full items-center justify-center rounded-t-lg bg-orange-400`}
+                  >
+                    <span className={`${item.textSize} font-bold text-black`}>
+                      {item.place}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ) : null,
+            )}
           </div>
           {/* Runner Ups Section */}
           <div>
@@ -255,11 +259,12 @@ export default function ResultsPage() {
               role="list"
               aria-labelledby="runner-ups-title"
             >
-              {moviesToDisplay.slice(3, 11).map((movie) => (
-                <div key={movie.id} role="listitem">
-                  <MovieCard movie={movie} />
-                </div>
-              ))}
+              {moviesToDisplay.length > 3 &&
+                moviesToDisplay.slice(3).map((movie) => (
+                  <div key={movie.id} role="listitem">
+                    <MovieCard movie={movie} />
+                  </div>
+                ))}
             </div>
           </div>
         </div>
