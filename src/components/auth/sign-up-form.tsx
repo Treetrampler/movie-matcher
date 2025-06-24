@@ -51,7 +51,7 @@ export function SignUpForm({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/callback`,
+          emailRedirectTo: `https://movie-matcher-black.vercel.app/callback`,
         },
       });
 

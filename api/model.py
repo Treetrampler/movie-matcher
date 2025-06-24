@@ -61,7 +61,7 @@ def recommend_movies():
             best_similarity = sim
             best_match = other_user_id
 
-        if sim>0.9:
+        if sim>0.99:
             break # early exit if a very similar user is found, improves scalability and performance
 
     if best_match is None:

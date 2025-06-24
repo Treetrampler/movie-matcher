@@ -44,7 +44,7 @@ export function ForgotPasswordForm({
 
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
-        redirectTo: `${window.location.origin}/update-password`,
+        redirectTo: `https://movie-matcher-black.vercel.app/update-password`,
       });
       if (error) throw error;
       setSuccess(true);
