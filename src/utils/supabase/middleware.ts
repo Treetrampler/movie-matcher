@@ -58,9 +58,12 @@ export async function updateSession(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     const redirectResponse = NextResponse.redirect(url);
-    supabaseResponse.cookies.getAll().forEach(({ name, value }) => {
-      redirectResponse.cookies.set(name, value);
+    supabaseResponse.cookies.getAll().forEach((cookie) => {
+      // Destructure 'name' and 'value', and collect all other properties into 'options'
+      const { name, value, ...options } = cookie;
+      redirectResponse.cookies.set(name, value, options);
     });
+
     return redirectResponse;
   }
 
@@ -78,9 +81,12 @@ export async function updateSession(request: NextRequest) {
       const url = request.nextUrl.clone();
       url.pathname = "/catalogue";
       const redirectResponse = NextResponse.redirect(url);
-      supabaseResponse.cookies.getAll().forEach(({ name, value }) => {
-        redirectResponse.cookies.set(name, value);
+      supabaseResponse.cookies.getAll().forEach((cookie) => {
+        // Destructure 'name' and 'value', and collect all other properties into 'options'
+        const { name, value, ...options } = cookie;
+        redirectResponse.cookies.set(name, value, options);
       });
+
       return redirectResponse;
     }
   }
@@ -108,9 +114,12 @@ export async function updateSession(request: NextRequest) {
       const url = request.nextUrl.clone();
       url.pathname = "/onboarding";
       const redirectResponse = NextResponse.redirect(url);
-      supabaseResponse.cookies.getAll().forEach(({ name, value }) => {
-        redirectResponse.cookies.set(name, value);
+      supabaseResponse.cookies.getAll().forEach((cookie) => {
+        // Destructure 'name' and 'value', and collect all other properties into 'options'
+        const { name, value, ...options } = cookie;
+        redirectResponse.cookies.set(name, value, options);
       });
+
       return redirectResponse;
     }
   }

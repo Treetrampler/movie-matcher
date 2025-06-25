@@ -46,10 +46,6 @@ export default function LobbyPage() {
     }
   }, [activated, groupCode, router]);
 
-  useEffect(() => {
-    router.refresh(); // Refresh the page to ensure activated is updated (bugs with first time users)
-  }, [isLoading]);
-
   return (
     <div
       className="flex min-h-screen flex-col bg-black text-white"

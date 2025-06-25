@@ -44,11 +44,9 @@ export default function AuthCallback() {
             .insert([
               { user_id: session.user.id, name: "unknown", activated: false },
             ]);
-          router.push("/onboarding");
-          return;
         }
 
-        router.push(data.activated ? "/catalogue" : "/onboarding");
+        router.push("/catalogue"); // Redirect to the catalogue page if the user is already activated
       } catch (err) {
         console.error(err);
         router.push("/login");
