@@ -41,7 +41,7 @@ export function SignUpForm({
 
   const [error, setError] = useState<string | null>(null);
 
-  // Handle sign-up form submission
+  // Handle sign-up form submission, change URL to http://localhost:3000/callback for localhost
   const handleSignUp = async (data: SignupFormValues) => {
     setError(null);
     try {
@@ -51,7 +51,7 @@ export function SignUpForm({
         email,
         password,
         options: {
-          emailRedirectTo: `http://localhost:3000/callback`,
+          emailRedirectTo: `https://movie-matcher-black.vercel.app/callback`,
         },
       });
 

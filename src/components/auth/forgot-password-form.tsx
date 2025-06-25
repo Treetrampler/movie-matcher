@@ -37,7 +37,7 @@ export function ForgotPasswordForm({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  // handle the logic of sending the reset password link to the email
+  // handle the logic of sending the reset password link to the email, set to http://localhost:3000/update-password for localhost
   const handleForgotPassword = async (data: ForgotPasswordFormValues) => {
     setError(null);
     const supabase = createClient();
