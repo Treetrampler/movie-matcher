@@ -37,14 +37,14 @@ export default function LobbyPage() {
 
   // When activated becomes true, push to results page
   useEffect(() => {
-    if (activated) {
+    if (activated || isLoading) {
       toast.success("Session started! Redirecting to results...");
       // eslint-disable-next-line react-web-api/no-leaked-timeout
       setTimeout(() => {
         router.push(`/results/${groupCode}`);
       }, 0);
     }
-  }, [activated, groupCode, router]);
+  }, [activated, groupCode, router, isLoading]);
 
   return (
     <div

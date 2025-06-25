@@ -152,9 +152,16 @@ export function MovieCard({ movie }: MovieCardProps) {
             </span>
           </div>
 
-          <div className="flex flex-wrap gap-1" aria-label="Genres">
+          <div
+            className="flex max-w-full flex-nowrap gap-1 overflow-hidden text-ellipsis whitespace-nowrap"
+            aria-label="Genres"
+          >
             {movie.genres.map((genre) => (
-              <Badge key={genre} variant="outline" className="text-xs">
+              <Badge
+                key={genre}
+                variant="outline"
+                className="text-xs whitespace-nowrap"
+              >
                 {genre}
               </Badge>
             ))}
