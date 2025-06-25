@@ -40,6 +40,7 @@ export default function Onboarding() {
   });
 
   const {
+    // validation resolver
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
@@ -174,7 +175,7 @@ export default function Onboarding() {
               <div className="mb-2">
                 <button
                   type="button"
-                  className="text-sm text-orange-500 underline"
+                  className="text-sm text-orange-400 underline"
                   onClick={() => setShowPrivacy((prev) => !prev)}
                   aria-expanded={showPrivacy}
                   aria-controls="privacy-policy"

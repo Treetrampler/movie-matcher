@@ -1,5 +1,7 @@
 EXPLANATION OF WHERE EVERYTHING IS FOR MR JAQUES:
 
+Firstly, before attempting to use localhost (read bottom for why), get the .env.local from the submission and put it in the project root
+
 THE APP FOLDER
 
 - contains all actual pages associated with the site
@@ -29,7 +31,7 @@ THE HOOKS FOLDER
 THE LIB FOLDER
 
 - contains my schemas, which define Zod validation (input validation) schemas and also basic interface/type schemas
-- also contains other misc functions such as my fetch-movies API call
+- also contains other misc functions such as my fetch-movies API call which I run once (outside of website runtime) to get all the movie data.
 
 THE UTILS/SUPABASE FOLDER
 
