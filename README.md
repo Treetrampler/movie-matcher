@@ -59,3 +59,8 @@ OTHER NOTES
 - A lot of the security is abstracted/difficult to find, I promise its there and I can explain how it all works if needed
 - To run this site locally you need to install Bun (NPM alternative), and NodeJS (and maybe some other stuff but I think its mainly those two). Then type bun i to install all dependencies, and bun run dev to launch a development server. If you have any difficulties I can bring my laptop and run it, but hopefully I will have it hosted by Thursday.
 - The site is hosted on https://movie-matcher-black.vercel.app/ it uses a pythonanyhwere hosted api, which is a little slow but works. If something breaks, you might want to just use the local host version (might have to reconfigure the fetch link but probably not).
+
+PLEASE READ!!!!!
+
+- The hosted version has an issue where the onboarding button doesn't redirect the user after completion. This issue is not present on my local version, meaning it is out of my control (I spent 10+ hours looking for the issue). TO FIX THIS, RELOAD THE PAGE
+- ANY OTHER ISSUES WITH THE HOSTED SITE NOT REDIRECTION, RELOAD THE PAGE

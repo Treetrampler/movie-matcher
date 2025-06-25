@@ -96,7 +96,7 @@ export function FilterModal({
         aria-describedby="filter-modal-desc"
       >
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold" id="filter-modal-title">
+          <DialogTitle className="text-2xl font-bold">
             Filter by Genre
           </DialogTitle>
         </DialogHeader>

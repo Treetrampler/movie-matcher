@@ -115,25 +115,34 @@ export function useGroupUsers(groupCode: string) {
           filter: `group_id=eq.${groupCode}`,
         },
         async (payload) => {
-          // Fetch the user's name from the users table using the user_id
+          // Fetch the user's name and avatar from the users table using the user_id
           let userName = "Unknown";
+          // eslint-disable-next-line no-undef-init
+          let avatarUrl: string | undefined = undefined;
           try {
             const { data: userData, error: userError } = await supabase
               .from("users")
-              .select("name")
+              .select("name, avatar")
               .eq("user_id", payload.new.user_id)
               .single();
-            if (!userError && userData?.name) {
-              userName = userData.name;
+            if (!userError && userData) {
+              userName = userData.name ?? "Unknown";
+              if (userData.avatar) {
+                const { data: signedUrlData } = await supabase.storage
+                  .from("avatars")
+                  .createSignedUrl(userData.avatar, 60 * 60);
+                avatarUrl = signedUrlData?.signedUrl ?? undefined;
+              }
             }
           } catch (err) {
-            console.error("Error fetching user name for new user:", err);
+            console.error("Error fetching user name/avatar for new user:", err);
           }
 
           const newUser = {
             id: payload.new.user_id,
             name: userName,
             isHost: payload.new.host,
+            avatar: avatarUrl,
           };
 
           setUsers((prevUsers) => [...prevUsers, newUser]);
